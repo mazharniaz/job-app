@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "424523490086",
+    "firebase_url": "https://fir-d0bfe.firebaseio.com",
+    "project_id": "fir-d0bfe",
+    "storage_bucket": "fir-d0bfe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:424523490086:android:91309afe2569affce997e7",
+        "android_client_info": {
+          "package_name": "com.appjobportal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "424523490086-sa0etqr9qmvlv9vn9tup1hbdgq01nrm3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZL7GRgc5FS_pRhMogvHDPZ8Sgh0teYnE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "424523490086-sa0etqr9qmvlv9vn9tup1hbdgq01nrm3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
