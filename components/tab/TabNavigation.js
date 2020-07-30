@@ -11,7 +11,8 @@ import SearchScreen from "../screens/SearchScreen"
 import NotificationScreen from "../screens/NotificationScreen"
 import ChatScreen from "../screens/ChatScreen"
 import ProfileScreen from "../screens/ProfileScreen"
-import CompanyProfileScreen from '../screens/CompanyProfileScreen'
+import CompanyProfileScreen from '../screens/CompanyProfileScreen';
+import RequestStaffScreen from '../screens/RequestStaffScreen';
 import { Header, Item, Text, Button, Input } from 'native-base'
 
 
@@ -22,6 +23,7 @@ const ChatStack = createStackNavigator();
 const NotificationStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
 const CompanyProfileStack = createStackNavigator();
+const PostAJobStack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
             
 let _this = null;
@@ -68,22 +70,12 @@ class TabNavigation extends Component {
         }}
       />
       <Tab.Screen
-        name="Chat"
-        component={ChatStackScreen}
+        name="RequestStaff"
+        component={PostAJobStackScreen}
         options={{
-          tabBarLabel: 'Chat',
+          tabBarLabel: 'Post a job',
           tabBarIcon: ({ color }) => (
-            <Icon name="md-chatbubbles" color={color} size={26} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Search"
-        component={SearchStackScreen}
-        options={{
-          tabBarLabel: 'Search',
-          tabBarIcon: ({ color }) => (
-            <Icon name="md-search" color={color} size={26} />
+            <Icon name="md-add" color={color} size={26} />
           ),
         }}
       />
@@ -201,37 +193,63 @@ const ProfileStackScreen = ({navigation}) => (
   </ProfileStack.Navigator>
 );
 
-const SearchStackScreen = ({navigation}) => (
-    <SearchStack.Navigator screenOptions={{
-        headerStyle: {
-            backgroundColor: "#0066ff",
-            height: 45
-        },
-        // headerTintColor: "#FFFFFF",
-        // headerTitleAlign: 'center',
-        // headerTitleStyle: {
-        //     fontSize: 18
-        // }
-    }}>
-        <SearchStack.Screen name="Search" component={SearchScreen} options={{
-            headerTitle: ''
-            // header: () => ( 
-              
-            //   // <Icon.Button 
-            //     // name="md-menu" 
-            //     // size={24} 
-            //     // backgroundColor= "#0066ff"
-            //     // onPress={() => {navigation.openDrawer();}}
-              
-            //       <HeaderSearch  />
-                
-                
-                
-            // )
-            
-        }} />
-    </SearchStack.Navigator>
+const PostAJobStackScreen = ({navigation}) => (
+  <PostAJobStack.Navigator screenOptions={{
+      headerStyle: {
+          backgroundColor: "#0066ff",
+          height: 45
+      },
+      headerTintColor: "#FFFFFF",
+      headerTitleStyle: {
+          fontSize: 18
+      },
+      headerTitleAlign: 'center',
+      headerTitle: 'Post a job'
+  }}>
+      <PostAJobStack.Screen name="RequestStaff" component={RequestStaffScreen} options={{
+          headerLeft: () => (
+              <Icon.Button 
+              name="md-menu" 
+              size={24} 
+              backgroundColor= "#0066ff"
+              onPress={() => {navigation.openDrawer();}}
+              />
+          )
+      }} />
+  </PostAJobStack.Navigator>
 );
+
+// const SearchStackScreen = ({navigation}) => (
+//     <SearchStack.Navigator screenOptions={{
+//         headerStyle: {
+//             backgroundColor: "#0066ff",
+//             height: 45
+//         },
+//         // headerTintColor: "#FFFFFF",
+//         // headerTitleAlign: 'center',
+//         // headerTitleStyle: {
+//         //     fontSize: 18
+//         // }
+//     }}>
+//         <SearchStack.Screen name="Search" component={SearchScreen} options={{
+//             headerTitle: ''
+//             // header: () => ( 
+              
+//             //   // <Icon.Button 
+//             //     // name="md-menu" 
+//             //     // size={24} 
+//             //     // backgroundColor= "#0066ff"
+//             //     // onPress={() => {navigation.openDrawer();}}
+              
+//             //       <HeaderSearch  />
+                
+                
+                
+//             // )
+            
+//         }} />
+//     </SearchStack.Navigator>
+// );
 
 const ChatStackScreen = ({navigation}) => (
   <ChatStack.Navigator screenOptions={{

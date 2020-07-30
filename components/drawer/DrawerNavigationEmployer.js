@@ -28,6 +28,10 @@ import FAQScreen from '../screens/FAQScreen';
 import EditProfileCandidate from '../screens/EditProfleCandidate';
 import ChangePassword from '../screens/ChangePassword';
 import CandidateAllJobsDescription from '../screens/CandidateAllJobsDescription';
+import SearchScreenJobDetails from '../screens/SearchScreenJobDetails';
+import CandidateActiveJobs from '../screens/CandidateActiveJobs'
+import ApplyJobScreen from '../screens/ApplyJobScreen';
+import ReferalScreen from '../screens/ReferalScreen';
 
 const HomeStack = createStackNavigator();
 const SearchStack = createStackNavigator();
@@ -41,11 +45,16 @@ const EditProfileStack = createStackNavigator();
 const ChangePasswordStack = createStackNavigator();
 const CandidateActiveDescriptionStack = createStackNavigator();
 const CandidateAllJobDescriptionStack = createStackNavigator();
+const SearchScreenJobDetailsStack = createStackNavigator();
+const ReferalStack = createStackNavigator();
+const CandidateActiveJobStack = createStackNavigator();
+const ApplyJobStack = createStackNavigator();
 
 const Drawer = createDrawerNavigator();
 
 export default class DrawerNavigationEmployer extends Component {
-    render() {
+    render(navigation) {
+        console.log(navigation, '----> NAVIGATION DRAWER')
         return(
             
               <Drawer.Navigator drawerContent={props => <DrawerEmployerContent {... props} />}>
@@ -61,12 +70,94 @@ export default class DrawerNavigationEmployer extends Component {
                   <Drawer.Screen name="LiveChat" component={SupportChatStackScreen} />
                   <Drawer.Screen name="EditProfile" component={EditProfileStackScreen} />
                   <Drawer.Screen name="ChangePassword" component={ChangePasswordStackScreen} />
-                  <Drawer.Screen name="CandidateAllJobsDescription" component={CandidateAllJobDescriptionStackScreen} />
+                  <Drawer.Screen name="CandidateAllJobsDescription" unmountOnBlur={true} options={{ unmountOnBlur: true }} component={CandidateAllJobDescriptionStackScreen} />
+                  <Drawer.Screen name="SearchScreenJobDetails" component={SearchScreenJobDetailsStackScreen} />
+                  <Drawer.Screen name="ApplyJob" component={ApplyJobStackScreen} />
+                  <Drawer.Screen name="Refer" component={ReferalStackScreen} />
               </Drawer.Navigator>
              
         )
     }
   }
+
+  const ReferalStackScreen = ({navigation}) => (
+    <ReferalStack.Navigator screenOptions={{
+        headerStyle: {
+            backgroundColor: "#0066ff",
+            height: 45
+        },
+        headerTintColor: "#FFFFFF",
+        headerTitleStyle: {
+            fontSize: 18
+        },
+        headerTitleAlign: 'center',
+        headerTitle: 'Refer a friend'
+    }}>
+        <ReferalStack.Screen name="Refer" component={ReferalScreen} options={{
+            headerLeft: () => (
+                <Icon.Button 
+                name="md-menu" 
+                size={24} 
+                backgroundColor= "#0066ff"
+                onPress={() => {navigation.openDrawer();}}
+                />
+            )
+        }} />
+    </ReferalStack.Navigator>
+  );
+  
+  const ApplyJobStackScreen = ({navigation}) => (
+    <ApplyJobStack.Navigator screenOptions={{
+        headerStyle: {
+            backgroundColor: "#0066ff",
+            height: 45
+        },
+        headerTintColor: "#FFFFFF",
+        headerTitleStyle: {
+            fontSize: 18
+        },
+        headerTitleAlign: 'center',
+        headerTitle: 'Apply Job'
+    }}>
+        <ApplyJobStack.Screen name="ApplyJob" component={ApplyJobScreen} options={{
+            headerLeft: () => (
+                <Icon.Button 
+                name="md-arrow-back" 
+                size={24} 
+                backgroundColor= "#0066ff"
+                onPress={() => {navigation.goBack();}}
+                />
+            )
+        }} />
+    </ApplyJobStack.Navigator>
+  );
+
+  
+  const SearchScreenJobDetailsStackScreen = ({navigation}) => (
+    <SearchScreenJobDetailsStack.Navigator screenOptions={{
+        headerStyle: {
+            backgroundColor: "#0066ff",
+            height: 45
+        },
+        headerTintColor: "#FFFFFF",
+        headerTitleStyle: {
+            fontSize: 18
+        },
+        headerTitleAlign: 'center',
+        headerTitle: 'Job Details'
+    }}>
+        <SearchScreenJobDetailsStack.Screen name="SearchScreenJobDetails" component={SearchScreenJobDetails} options={{
+            headerLeft: () => (
+                <Icon.Button 
+                name="md-arrow-back" 
+                size={24} 
+                backgroundColor= "#0066ff"
+                onPress={() => {navigation.goBack();}}
+                />
+            )
+        }} />
+    </SearchScreenJobDetailsStack.Navigator>
+  );
 
   const SettingStackScreen = ({navigation}) => (
     <SettingStack.Navigator screenOptions={{
@@ -277,6 +368,7 @@ const MyEarningsStackScreen = ({navigation}) => (
 );
 
 const CandidateActiveDescriptionStackScreen = ({navigation}) => (
+
     <CandidateActiveDescriptionStack.Navigator screenOptions={{
         headerStyle: {
             backgroundColor: "#0066ff",
@@ -287,7 +379,8 @@ const CandidateActiveDescriptionStackScreen = ({navigation}) => (
             fontSize: 18
         },
         headerTitle: 'Job Description',
-        headerTitleAlign: "center"
+        headerTitleAlign: "center",
+        
     }}>
         <CandidateActiveDescriptionStack.Screen name="CandidateActiveDescription" component={CandidateActiveDescription} options={{
             headerLeft: () => (
@@ -295,7 +388,7 @@ const CandidateActiveDescriptionStackScreen = ({navigation}) => (
                 name="md-arrow-back" 
                 size={24} 
                 backgroundColor= "#0066ff"
-                onPress={() => {navigation.goBack();}}
+                onPress={() => {navigation.goBack()}}
                 />
             )
         }} />

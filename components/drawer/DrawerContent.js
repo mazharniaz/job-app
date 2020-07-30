@@ -86,18 +86,18 @@ export default class DrawerContent extends Component {
                         <DrawerItem style={styles.drawerItem}
                             icon={({color, size}) => (
                             <Icon 
-                                name="md-apps"
+                                name="md-home"
                                 color={color}
                                 size={size}
                             />
                             )}
-                            label="Dashboard"
+                            label="Home"
                             onPress={() => {this.props.navigation.navigate('Home')}}
                         />
                         <DrawerItem style={styles.drawerItem}
                             icon={({color, size}) => (
                             <Icon 
-                                name="md-list"
+                                name="md-briefcase"
                                 color={color}
                                 size={size}
                             />
@@ -108,58 +108,25 @@ export default class DrawerContent extends Component {
                         <DrawerItem style={styles.drawerItem}
                             icon={({color, size}) => (
                             <Icon 
-                                name="md-chatbubbles"
+                                name="md-folder-open"
                                 color={color}
                                 size={size}
                             />
                             )}
-                            label="Chat"
-                            onPress={() => {this.props.navigation.navigate('Chat')}}
+                            label="Open Jobs"
+                            onPress={() => {this.props.navigation.navigate('Bids')}}
                         />
                         {/* <DrawerItem style={styles.drawerItem}
                             icon={({color, size}) => (
                             <Icon 
-                                name="md-calendar"
-                                color={color}
-                                size={size}
-                            />
-                            )}
-                            label="All Shifts"
-                            onPress={() => {props.navigation.navigate('AllShifts')}}
-                        />
-                        <DrawerItem style={styles.drawerItem}
-                            icon={({color, size}) => (
-                            <Icon 
-                                name="md-timer"
-                                color={color}
-                                size={size}
-                            />
-                            )}
-                            label="Pending Actions"
-                            onPress={() => {props.navigation.navigate('Pending')}}
-                        /> */}
-                        <DrawerItem style={styles.drawerItem}
-                            icon={({color, size}) => (
-                            <Icon 
-                                name="md-thumbs-up"
-                                color={color}
-                                size={size}
-                            />
-                            )}
-                            label="Rate"
-                            onPress={() => {}}
-                        />
-                        <DrawerItem style={styles.drawerItem}
-                            icon={({color, size}) => (
-                            <Icon 
-                                name="md-podium"
+                                name="md-clipboard"
                                 color={color}
                                 size={size}
                             />
                             )}
                             label="Company Pofile"
                             onPress={() => {this.props.navigation.navigate('CompanyProfile')}}
-                        />
+                        /> */}
                         <DrawerItem style={styles.drawerItem}
                             icon={({color, size}) => (
                             <Icon 
@@ -171,39 +138,6 @@ export default class DrawerContent extends Component {
                             label="Support"
                             onPress={() => {this.props.navigation.navigate('SupportScreen')}}
                         />
-                        {/* <DrawerItem style={styles.drawerItem}
-                            icon={({color, size}) => (
-                            <Icon 
-                                name="md-help-buoy"
-                                color={color}
-                                size={size}
-                            />
-                            )}
-                            label="FAQ"
-                            onPress={() => {props.navigation.navigate('FAQ')}}
-                        /> */}
-                        <DrawerItem style={styles.drawerItem}
-                            icon={({color, size}) => (
-                            <Icon 
-                                name="md-help-buoy"
-                                color={color}
-                                size={size}
-                            />
-                            )}
-                            label="Perks"
-                            onPress={() => {this.props.navigation.navigate('Perks')}}
-                        />
-                        <DrawerItem style={styles.drawerItem}
-                            icon={({color, size}) => (
-                            <Icon 
-                                name="md-help-buoy"
-                                color={color}
-                                size={size}
-                            />
-                            )}
-                            label="Referal"
-                            onPress={() => {this.props.navigation.navigate('Referal')}}
-                        />
                         <DrawerItem style={styles.drawerItem}
                             icon={({color, size}) => (
                             <Icon 
@@ -214,6 +148,17 @@ export default class DrawerContent extends Component {
                             )}
                             label="Settings"
                             onPress={() => {this.props.navigation.navigate('Setting')}}
+                        />
+                        <DrawerItem style={styles.drawerItem}
+                            icon={({color, size}) => (
+                            <Icon 
+                                name="md-star-outline"
+                                color={color}
+                                size={size}
+                            />
+                            )}
+                            label="Rate"
+                            onPress={() => {}}
                         />
                     </Drawer.Section>
                 </View>

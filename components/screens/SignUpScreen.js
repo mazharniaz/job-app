@@ -37,10 +37,13 @@ class SignUpScreen extends Component {
             isSelected: false,
             setSelection: false,
 
+            name_check_textInputChange: false,
             check_textInputChange: false,
             secureTextEntry: true,
             confirm_secureTextEntry: true
         }
+
+        
     }
     
     // const [selectedValue, setSelectedValue] = React.useState("");
@@ -72,31 +75,60 @@ class SignUpScreen extends Component {
             whoim: whoim
         }),axiosConfig)
           .then((response) => {
-            console.log(response.data, "lulu ====>")
+            console.log(response.data, "REGISTER ====>")
             resp = response;
             this.setState({
                 isLoading: true,
                 data: response
            })
+
+           if(response.data.register === "true") {
+               alert('Register Successfully!')
+               this.props.navigation.navigate('EmailVerification2');
+           }
+           else {
+               alert('Error!')
+           }
         }, (error) => {
           console.log(error,"///////////////////////////////////");
         });
     }
+
+    _storeRegisterEmail = async () => {
+          
+        //console.log(this.state.data, "----> UserID Checking")
+        try {
+          let obj = {
+            email: this.state.email,
+          }
     
+          await AsyncStorage.setItem(
+            'emailReg', JSON.stringify(obj)        
+          );
+        } catch (error) {
+          alert(error)
+        }
+      };
+
+      handleRegister() {
+        this._storeRegisterEmail(this.state.email);
+        this.userRegister(this.state.name, this.state.email, this.state.password, this.state.whoim)
+      }
+
     render(navigation) {
         
-        const name_textInputChange = (val) => {
-            if(val.length != 0 ) {
+        const name_textInputChange = (nameval) => {
+            if(nameval.length != 0 ) {
                 this.setState({
                     ... this.state,
-                    name: val,
-                    check_textInputChange: true
+                    name: nameval,
+                    name_check_textInputChange: true
                 })
             } else {
                 this.setState({
                     ... this.state,
-                    name: val,
-                    check_textInputChange: false
+                    name: nameval,
+                    name_check_textInputChange: false
                 }) 
             }
         }
@@ -166,7 +198,7 @@ class SignUpScreen extends Component {
                         placeholder="Your Name"
                         style={styles.textInput}
                         //autoCapitalize='none'
-                        onChangeText={(val) => name_textInputChange(val)}
+                        onChangeText={(nameval) => name_textInputChange(nameval)}
                     />
                     
                     {this.state.check_textInputChange ?
@@ -294,7 +326,7 @@ class SignUpScreen extends Component {
                 </View>
 
                 <View style={styles.button}>
-                    <TouchableOpacity style={styles.signIn} onPress={() => this.userRegister(this.state.name, this.state.email, this.state.password, this.state.whoim)}>
+                    <TouchableOpacity style={styles.signIn} onPress={() => this.handleRegister()}>
                         <LinearGradient style={styles.signIn} colors={['#abec9e', '#0066ff']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
                             <Text style={[styles.textSign, {color: '#ffffff'}]}>Sign Up</Text>
                         </LinearGradient>

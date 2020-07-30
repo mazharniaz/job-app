@@ -1,113 +1,78 @@
 import React, { Component } from 'react';
-import { Text, View, TextInput, StyleSheet } from 'react-native';
-import { Header, Left, Button, Icon } from 'native-base'
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
-import firebase from '../firebase/firbaseconf';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Input, Label, Item, Form, Button, Container } from 'native-base';
+import LinearGradient from 'react-native-linear-gradient';
+import axios from 'axios';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class ForgotPassword extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            isLoading: '',
-            email: '',
-            check_textInputChange: false,
+            isLoading: true,
+            data: {}
         }
     }
 
   render(navigation) {
 
-    const passwordReset = (email) => {
-        return firebase.auth().sendPasswordResetEmail(email)
-      },
+    // const passwordReset = (email) => {
+    //     return firebase.auth().sendPasswordResetEmail(email)
+    //   },
 
-    handlePasswordReset = async (values, actions) => {
-        const { email } = values
+    // handlePasswordReset = async (values, actions) => {
+    //     const { email } = values
       
-        try {
-          await this.props.firebase.passwordReset(email)
-          console.log('Password reset email sent successfully')
-          this.props.navigation.navigate('Login')
-        } catch (error) {
-          actions.setFieldError('general', error.message)
-        }
-      }
-
-    const textInputChange = (val) => {
-        if(val.length != 0 ) {
-            this.setState({
-                ... this.state,
-                email: val,
-                check_textInputChange: true
-            })
-        } else {
-            this.setState({
-                ... this.state,
-                email: val,
-                check_textInputChange: false
-            }) 
-        }
-    }
+    //     try {
+    //       await this.props.firebase.passwordReset(email)
+    //       console.log('Password reset email sent successfully')
+    //       this.props.navigation.navigate('Login')
+    //     } catch (error) {
+    //       actions.setFieldError('general', error.message)
+    //     }
+    //   }
       
     return (
-      
-          <View style={styles.container}>
+        <Container>
+            <Form style={{marginTop: '1%', marginRight: '5%'}}>
+                <Item stackedLabel style={styles.container}>
+                    <Label>Enter your register email</Label>
+                    <Input onChangeText={text => this.setState({verification_code: text})} keyboardType="number-pad" />
+                </Item>
 
-              
-        <Text style={styles.text_footer}>Email</Text>
-
-            <View style={styles.action}>
-                <FontAwesome 
-                    name="user-o"
-                    color="#0066ff"
-                    size={20}
-                />
-                <TextInput 
-                    placeholder="Your Email"
-                    style={styles.textInput}
-                    autoCapitalize='none'
-                    value={this.state.email}
-                    onChangeText={(val) => textInputChange(val)}
-                />
-                
-                {this.state.check_textInputChange ?
-                <View animation="bounceIn">
-                    <Feather 
-                        name="check-circle"
-                        size={20}
-                        color='#0066ff'
-                    />
+                <View style={styles.button}>
+                    <TouchableOpacity style={styles.signIn} onPress={() => this.props.navigation.navigate('ForgotPasswordCode')}>
+                        <LinearGradient style={styles.signIn} colors={['#abec9e', '#0066ff']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
+                            <Text style={[styles.textSign, {color: '#ffffff'}]}>Next!</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
                 </View>
-                : null}
-            </View>
-            </View>
+            </Form>
+    </Container>
     )
   }
 }
 
 const styles = StyleSheet.create({
-    text_footer: {
-        color: '#0066ff',
-        fontSize: 18
-    },
-    action: {
-        flexDirection: 'row',
-        marginTop: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f2f2f2',
-        paddingBottom: 5
-    },
-    textInput: {
+    container: {
         flex: 1,
-        marginTop: Platform.OS ==='ios' ? 0 : -12,
-        paddingLeft: 10,
-        color: '#05375a'
     },
-    container : {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
+    button: {
+        alignItems: 'center',
+        marginTop: 30,
+        marginLeft: '4%'
+    },
+    signIn: {
+        width: "100%",
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10
+    },
+    textSign: {
+        fontSize: 18,
+        fontWeight: 'bold'
     }
 });
 

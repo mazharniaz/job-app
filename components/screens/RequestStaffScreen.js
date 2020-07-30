@@ -11,7 +11,8 @@ import { Container, Content, Form, Item, Input, Button, Label, Body, Icon, ListI
 import LinearGradient from 'react-native-linear-gradient';
 import ImagePicker from 'react-native-image-picker';
 import axios from 'axios';
-import Spinner from 'react-native-spinkit' 
+import Spinner from 'react-native-spinkit';
+import AsyncStorage from '@react-native-community/async-storage'; 
 //import { TextInput } from 'react-native-gesture-handler';
 //import { ActivityIndicator } from 'react-native-paper';
 
@@ -43,9 +44,25 @@ export default class RequestStaffScreen extends Component {
     }
   }
 
+  _retrieve_address = async () => {
+    try {
+      const address = await AsyncStorage.getItem('address');
+      const parse = JSON.parse(address);
+      console.log(parse, '------> PARSE')
+      
+      this.setState({
+        Address: parse.address,
+      })
+
+    } catch (error) {
+        alert(error)
+    }
+  }
+
   componentDidMount() {
     //let resp;
     //console.log('component ka lulu=======>')
+    this._retrieve_address();
 
     //console.log(axiosConfig, "------->>>")
     axios.get('http://production.myquickshift.com/app_api/catagory_job_api')
@@ -91,6 +108,8 @@ export default class RequestStaffScreen extends Component {
                 isLoading: true,
                 data: response
            })
+
+           alert('Sucessful!!')
         }, (error) => {
           console.log(error,"-----> Post a job error checker");
         });
@@ -304,7 +323,8 @@ export default class RequestStaffScreen extends Component {
                             this.state.postal_date,
                             this.state.salary_offer,
                             this.state.closing_date,
-                            this.state.notification_email
+                            this.state.notification_email,
+                            this.state.image
                         )}
                       >
                           <LinearGradient style={styles.updateBtn} colors={['#abec9e', '#0066ff']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>

@@ -36,8 +36,12 @@ import DraftJobs from '../screens/DraftJobs';
 import ActiveJobs from '../screens/ActiveJobs';
 import PendingJobs from '../screens/PendingJobs'
 import DeactivateJobs from '../screens/DeactivateJobs'
-import EditJob from '../screens/EditJob'
+import EditJob from '../screens/EditJob';
+import BidsScreen from '../screens/BidsScreen'
+import ManageBids from '../screens/ManageBids';
+import BidsDescription from '../screens/BidsDescription';
 //import DraftJobs from '../screens/DraftJobs';
+import SignInScreen2 from '../screens/SignInScreen2';
 
 const HomeStack = createStackNavigator();
 const SearchStack = createStackNavigator();
@@ -53,16 +57,26 @@ const EditProfileStack = createStackNavigator();
 const ChangePasswordStack = createStackNavigator();
 const OrdersStack = createStackNavigator();
 const EditJobStack = createStackNavigator();
+const BidsStack = createStackNavigator();
+const ManageBidsStack = createStackNavigator();
+const BidsDescriptionStack = createStackNavigator();
 
 const Drawer = createDrawerNavigator();
 
 const DraftStack = createStackNavigator();
+const SignInStack = createStackNavigator();
 
 const DraftStackScreen = ({navigation}) => (
     <DraftStack.Navigator>
         <DraftStack.Screen name="Draft" component={DraftJobs}/>
     </DraftStack.Navigator>
 );
+
+// const SignInStackScreen = ({navigation}) => (
+//     <SignInStack.Navigator>
+//         <SignInStack.Screen name="SignInScreen2" component={SignInScreen2}/>
+//     </SignInStack.Navigator>
+// );
 
 const EditJobStackScreen = ({navigation}) => (
     <EditJobStack.Navigator screenOptions={{
@@ -167,7 +181,7 @@ const SearchStackScreen = ({navigation}) => (
 
 
 export default class DrawerNavigation extends Component {
-  render() {
+  render(navigation) {
       return(
           
             <Drawer.Navigator drawerContent={props => <DrawerContent {... props} />}>
@@ -176,7 +190,7 @@ export default class DrawerNavigation extends Component {
                   <Drawer.Screen name="Setting" component={SettingStackScreen} />
                   <Drawer.Screen name="AllShifts" component={AllShiftsScreen} />
                   <Drawer.Screen name="Pending" component={PendingActionsScreen} />
-                  <Drawer.Screen name="RequestStaff" component={RequestStaffStackScreen} />
+                  {/* <Drawer.Screen name="RequestStaff" component={RequestStaffStackScreen} /> */}
                   <Drawer.Screen name="CompanyProfile" component={CompanyProfileStackScreen} />
                   <Drawer.Screen name="FAQ" component={FAQStackScreen} />
                   <Drawer.Screen name="Perks" component={PerksStackScreen} />
@@ -187,11 +201,94 @@ export default class DrawerNavigation extends Component {
                   <Drawer.Screen name="Orders" component={OrdersStackScreen} />
                   <Drawer.Screen name="Draft" component={DraftStackScreen} />
                   <Drawer.Screen name="EditJob" component={EditJobStackScreen} />
+                  <Drawer.Screen name="Bids" component={BidsStackScreen} />
+                  {/* <Drawer.Screen name="SignInScreen2" component={SignInStackScreen} /> */}
+                  <Drawer.Screen name="BidsDescription" unmountOnBlur={true} options={{ unmountOnBlur: true }} component={BidsDescriptionStackScreen} />
+                  <Drawer.Screen name="ManageBids" unmountOnBlur={true} options={{ unmountOnBlur: true }} component={ManageBidsStackScreen} />
             </Drawer.Navigator>
            
       )
   }
 }
+
+const BidsDescriptionStackScreen = ({navigation}) => (
+    <BidsDescriptionStack.Navigator screenOptions={{
+        headerStyle: {
+            backgroundColor: "#0066ff",
+            height: 45
+        },
+        headerTintColor: "#FFFFFF",
+        headerTitleStyle: {
+            fontSize: 18
+        },
+        headerTitleAlign: 'center',
+        headerTitle: 'Candidate Details'
+    }}>
+        <BidsDescriptionStack.Screen name="BidsDescription" component={BidsDescription} options={{
+            headerLeft: () => (
+                <Icon.Button 
+                name="md-arrow-back" 
+                size={24} 
+                backgroundColor= "#0066ff"
+                onPress={() => {navigation.goBack();}}
+                />
+            )
+        }} />
+    </BidsDescriptionStack.Navigator>
+  );
+
+
+const BidsStackScreen = ({navigation}) => (
+    <BidsStack.Navigator screenOptions={{
+        headerStyle: {
+            backgroundColor: "#0066ff",
+            height: 45
+        },
+        headerTintColor: "#FFFFFF",
+        headerTitleStyle: {
+            fontSize: 18
+        },
+        headerTitleAlign: 'center',
+        headerTitle: 'Open Jobs'
+    }}>
+        <BidsStack.Screen name="Bids" component={BidsScreen} options={{
+            headerLeft: () => (
+                <Icon.Button 
+                name="md-menu" 
+                size={24} 
+                backgroundColor= "#0066ff"
+                onPress={() => {navigation.openDrawer();}}
+                />
+            )
+        }} />
+    </BidsStack.Navigator>
+  );
+
+  const ManageBidsStackScreen = ({navigation}) => (
+    <ManageBidsStack.Navigator screenOptions={{
+        headerStyle: {
+            backgroundColor: "#0066ff",
+            height: 45
+        },
+        headerTintColor: "#FFFFFF",
+        headerTitleStyle: {
+            fontSize: 18
+        },
+        headerTitleAlign: 'center',
+        headerTitle: 'Bids'
+    }}>
+        <ManageBidsStack.Screen name="ManageBids" component={ManageBids} options={{
+            headerLeft: () => (
+                <Icon.Button 
+                name="md-arrow-back" 
+                size={24} 
+                backgroundColor= "#0066ff"
+                onPress={() => {navigation.goBack();}}
+                />
+            )
+        }} />
+    </ManageBidsStack.Navigator>
+  );
 
 const SettingStackScreen = ({navigation}) => (
     <SettingStack.Navigator screenOptions={{
@@ -230,7 +327,7 @@ const SettingStackScreen = ({navigation}) => (
             fontSize: 18
         },
         headerTitleAlign: 'center',
-        headerTitle: 'Edit Profile'
+        headerTitle: 'Edit Company Profile'
     }}>
         <EditProfileStack.Screen name="EditProfile" component={EditProfileScreen} options={{
             headerLeft: () => (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { 
     View, 
     Text,
@@ -8,7 +8,17 @@ import {
 import { Container, Content, Form, Item, Input, Label, Footer } from 'native-base';
 import LinearGradient from 'react-native-linear-gradient';
 
-export default function CompanyProfileScreen({navigation}) {
+export default class CompanyProfileScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+
+    }
+  }
+
+  
+  
+  render(navigation) {
     return(
         <Container style={styles.container}>
         <Content style={styles.content}>
@@ -39,8 +49,8 @@ export default function CompanyProfileScreen({navigation}) {
           </Form>
         </Content>
       </Container>
-      
     )
+  }
 } 
 
 const styles = StyleSheet.create({

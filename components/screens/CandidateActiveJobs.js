@@ -55,17 +55,43 @@ class CandidateActiveJobs extends Component {
       };
 
       handlePress(id, _user_id_2) {
+          
+          
           this._storeCandidateJobData(id, _user_id_2)
           this.props.navigation.navigate('CandidateActiveDescription')
       }
 
+    //   resetJobData = async (id, _user_id_2) => {
+    //     try {
+    //         let obj = {
+    //           id: id,
+    //           user_id_2: _user_id_2
+    //         }
+      
+    //         await AsyncStorage.setItem(
+    //           'CandidateJobReset', JSON.stringify(obj)        
+    //         );
+    //       } catch (error) {
+    //         alert(error)
+    //       }
+    //       console.log(id, _user_id_2, '----> RESEt')
+    //   }
+
+    //   nullData() {
+    //       this.setState({
+    //           id: '',
+    //           user_id_2: ''
+    //       })
+    //   }
+
       _storeCandidateJobData = async (id, _user_id_2) => {
+        // this.resetJobData('', '')
+        // console.log(this.resetJobData('',''), '---> NULL')
         try {
           let obj = {
             id: id,
             user_id_2: _user_id_2
           }
-    
           await AsyncStorage.setItem(
             'CandidateJob', JSON.stringify(obj)        
           );

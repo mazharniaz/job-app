@@ -5,6 +5,28 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import { ScrollView } from 'react-native-gesture-handler';
 import Spinner from 'react-native-spinkit';
+import { useFocusEffect } from '@react-navigation/native';
+
+function useMousePosition() {
+    useFocusEffect(
+        React.useCallback(() => {
+          // Do something when the screen is focused
+          console.log('FOCUS')
+    
+          return () => {
+            // Do something when the screen is unfocused
+            // Useful for cleanup functions
+            console.log('DAMN FUCK ATIF')
+          };
+        }, [])
+      );
+    return pos
+  }
+
+  function MousePosition({ event, children }) {
+    let pos = useMousePosition(event)
+    return children(pos)
+  }
 
 class CandidateAllJobs extends Component {
     constructor(props) {
@@ -21,6 +43,8 @@ class CandidateAllJobs extends Component {
 
     componentDidMount() {
         this._retrieveData();
+
+        //this.onNavigatorEvent(event);
     }
 
     _retrieveData = async () => {
@@ -54,7 +78,8 @@ class CandidateAllJobs extends Component {
     }
 
     _storeCandidateAllJobData = async (id, _user_id_2) => {
-      try {
+        console.log(id, '------>> JOB ID')
+        try {
         let obj = {
           id: id,
           user_id_2: _user_id_2
@@ -111,6 +136,7 @@ class CandidateAllJobs extends Component {
   };
 
   render() {
+    
     if(this.state.isLoading) {
         return(
             <View style={{flex: 1, alignItems: "center", justifyContent: 'center'}}>

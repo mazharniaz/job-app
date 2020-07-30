@@ -192,33 +192,9 @@ const ProfileStackScreen = ({navigation}) => (
 
 const SearchStackScreen = ({navigation}) => (
     <SearchStack.Navigator screenOptions={{
-        headerStyle: {
-            backgroundColor: "#0066ff",
-            height: 45
-        },
-        // headerTintColor: "#FFFFFF",
-        // headerTitleAlign: 'center',
-        // headerTitleStyle: {
-        //     fontSize: 18
-        // }
+      headerShown: false  
     }}>
-        <SearchStack.Screen name="Search" component={SearchScreen} options={{
-            headerTitle: ''
-            // header: () => ( 
-              
-            //   // <Icon.Button 
-            //     // name="md-menu" 
-            //     // size={24} 
-            //     // backgroundColor= "#0066ff"
-            //     // onPress={() => {navigation.openDrawer();}}
-              
-            //       <HeaderSearch  />
-                
-                
-                
-            // )
-            
-        }} />
+        <SearchStack.Screen name="Search" component={SearchScreen} />
     </SearchStack.Navigator>
 );
 

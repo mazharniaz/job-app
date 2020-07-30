@@ -77,7 +77,7 @@ export default class CandidateActiveDescription extends Component {
                             user_id: parse2.user_id
                         })
           //alert(JSON.stringify(this.state.data));
-          //console.log(parse1.id, parse1.user_id_2, parse2.user_id, '---> candidate job')
+          console.log(this.state.id, this.state.user_id, '---> candidate job')
 
           axios.get(`http://production.myquickshift.com/app_api/WorkFlowDetail_api/${this.state.id}/${this.state.user_id}`)
           .then((response) => {
@@ -138,16 +138,26 @@ export default class CandidateActiveDescription extends Component {
     }
 
       checkIn_checkOut() {
-        return this.state.data.chek_in_out.map((element, i) => {
-            console.log(element, '---> element')
-            return (
-                <DataTable.Row key={i}>
-                    <DataTable.Cell>{moment(element.updated_at).format("MMMM D, YYYY")}</DataTable.Cell>
-                    <DataTable.Cell numeric>{element.checkin_time}</DataTable.Cell>
-                    <DataTable.Cell numeric>{element.checkout_time}</DataTable.Cell>
+          if(this.state.data.chek_in_out === []) {
+              return (
+                <DataTable.Row>
+                    <DataTable.Cell></DataTable.Cell>
+                    <DataTable.Cell>No record to display</DataTable.Cell>
+                    <DataTable.Cell>No record to display</DataTable.Cell>
                 </DataTable.Row>
-            )
-        })
+              )
+          } else {
+            return this.state.data.chek_in_out.map((element, i) => {
+                console.log(element, '---> element')
+                return (
+                    <DataTable.Row key={i}>
+                        <DataTable.Cell>{moment(element.updated_at).format("MMMM D, YYYY")}</DataTable.Cell>
+                        <DataTable.Cell numeric>{element.checkin_time}</DataTable.Cell>
+                        <DataTable.Cell numeric>{element.checkout_time}</DataTable.Cell>
+                    </DataTable.Row>
+                )
+            })
+        }
     }
       
 

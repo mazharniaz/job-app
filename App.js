@@ -20,7 +20,10 @@ import { Drawer } from 'react-native-paper';
 import SupportStackScreen from './components/stack/SupportStack'
 
 import AsyncStorage from '@react-native-community/async-storage';
-import firebase from './components/firebase/firbaseconf'
+import firebase from './components/firebase/firbaseconf';
+
+import messaging from '@react-native-firebase/messaging';
+//import { TapGestureHandler } from 'react-native-gesture-handler';
 
 var PushNotification = require("react-native-push-notification");
 
@@ -28,13 +31,141 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      
+      isLoading: true,
+      data: {},
+
+      id: '',
+      app_token: '',
+
+      user_status: ''
     }
   }
 
-  async componentDidMount() {
-    this.checkPermission();
+  async requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  }
 
+  async backgroundMessages() {
+    
+  }
+
+  _UpdateUserID = async () => {
+    // retriveid chekc if empty
+    this.getUserID(this.state.id);
+
+    console.log(this.state.id, 'GETTING USER ID')
+
+  }  
+
+  getUserID = async () => {
+    try {
+      const userid = await AsyncStorage.getItem('userid');
+      const parse = JSON.parse(userid);
+
+      this.setState({
+        id: parse.user_id
+      })
+
+    if(this.state.id === '') {
+      try {
+        let obj = {
+          id: '!@14' 
+        }
+        await AsyncStorage.setItem(
+          'userid', JSON.stringify(obj)        
+        );
+      } catch (error) {
+        alert(error)
+      }
+    }
+    } catch (error) {
+        //alert(error)
+        console.log(parse.user_id, '----> APP KA PARSE 1')
+    }
+  }
+
+  postToken = async (id, app_token) => {
+    try {
+      const user = await AsyncStorage.getItem('user');
+      const parse = JSON.parse(user);
+      console.log(user, '-----> USER USER')
+      this.setState({
+        id: parse.user_id
+      })
+
+    
+    let axiosConfig = {
+      headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          "Access-Control-Allow-Origin": "*",
+      }
+    };
+    console.log(this.state.id, app_token, 'USERRRRRRRRRRR')
+    axios.post('http://myquickshift.com/app_api/send_app_token', JSON.stringify({
+      id: this.state.id,
+      app_token: app_token
+    }),axiosConfig)
+      .then((response) => {
+        console.log(response.data.user_status, "-----> Token response checker")
+        //resp = response;
+        this._storeUserStatus(response.data.user_status, response.data.app_token)
+        this.setState({
+            isLoading: false,
+            data: response.data,
+            user_status: response.data.user_status
+       }) 
+       console.log(this.state.id, '----> ABCABCBAC')
+    }, (error) => {
+      console.log(error,"-----> Token error checker");
+    });
+
+  } catch (error) {
+    //alert(error)
+    console.log(parse.user_id, '----> APP KA PARSE 2')
+  }
+}
+
+ _storeUserStatus = async (_user_status, _token) => {
+  console.log(_user_status, '---> abababababab')
+  try {
+    let obj = {
+      user_status: _user_status,
+      app_token: _token
+    }
+    await AsyncStorage.setItem(
+      'user_Status', JSON.stringify(obj)        
+    );
+  } catch (error) {
+    alert(error)
+  }
+ }
+
+  
+
+  async componentDidMount() {
+    
+    if(!this.state.isLoading) {
+      console.log('sjadjasijasidjaisjdiajdsiajdsisajdasjd')
+      console.log(this.state.data, '----> ABCV')
+
+      
+    }
+
+    this._UpdateUserID(this.state.id);
+
+    
+    
+    //this.requestUserPermission();
+    this.checkPermission();
+    this.backgroundMessages();
+    
     PushNotification.configure({
 
       onRegister: token => { 
@@ -42,12 +173,17 @@ class App extends Component {
         console.log(token, '------> token')
         // Or store it in AsyncStorage, or in my case RNSecureStorage.
 
-        
+        this.postToken(this.state.id, token.token)
+
       },
       
       // (required) Called when a remote is received or opened, or local notification is opened
       onNotification: function (notification) {
         console.log("NOTIFICATION:", notification);
+
+      messaging().setBackgroundMessageHandler(async remoteMessage => {
+          console.log('Message handled in the background!', remoteMessage);
+        });
       },
 
       permissions: {
@@ -59,6 +195,8 @@ class App extends Component {
       popInitialNotification: true,
       //requestPermissions: true,
     });
+    
+
 
   }
 
@@ -100,7 +238,7 @@ class App extends Component {
       
       let obj = {
         email: this.state.data,
-        password: this.state.data
+        password: this.state.data,
       }
 
       await AsyncStorage.setItem(

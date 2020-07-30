@@ -45,7 +45,7 @@ class HomeScreen extends Component {
             </SafeAreaView>
             </LinearGradient>
             
-        <SlidingUpPanel ref={c => (this._panel = c)}
+        {/* <SlidingUpPanel ref={c => (this._panel = c)}
             draggableRange={{top: height / 1.25 , bottom: 300}}
             animatedValue={this._draggedValue}
             showBackdrop={true}
@@ -282,7 +282,7 @@ class HomeScreen extends Component {
                 </Container>
             </View>
           )}
-        </SlidingUpPanel>
+        </SlidingUpPanel> */}
       </View>
 
       </LinearGradient>

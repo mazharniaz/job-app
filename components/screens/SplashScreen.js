@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import SignInScreen from '../screens/SignInScreen'
+//import SignInScreen2 from './SignInScreen2';
 
 export default class SplashScreen extends Component {
 
@@ -24,6 +25,8 @@ export default class SplashScreen extends Component {
             data: { },
             email: ''
         }
+
+        console.log(this.props, '---> Splash props')
     }
     
     componentDidMount() {
@@ -35,6 +38,8 @@ export default class SplashScreen extends Component {
     getEmail(email) {
         
         const that = this;
+
+        //const { navigation } = this.props.navigation
         
         let axiosConfig = {
             headers: {
@@ -55,7 +60,7 @@ export default class SplashScreen extends Component {
            })
            
             if(response.data.login_data === []) {
-                that.props.navigation.navigate('SignInScreen'); 
+                that.props.navigation.navigate('SignInScreen2'); 
             }
             else if(response.data.login_data[0].whoim === "employer") {
                 
@@ -87,11 +92,13 @@ export default class SplashScreen extends Component {
 
         } catch (error) {
             
-            this.props.navigation.navigate('SignInScreen');
+            this.props.navigation.navigate('SignInScreen2');
         }
       };
     
     render(navigation) {
+
+        console.log(navigation, '---> NAVIGATION')
 
         if(this.state.isLoading) {
             return(
@@ -108,8 +115,10 @@ export default class SplashScreen extends Component {
                     </View>
                 </View>
             )
-        } 
-            return <SignInScreen />
+        } else {
+            return <SignInScreen navigation={this.props.navigation} />
+        }
+            
         
     }
 }

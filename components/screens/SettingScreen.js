@@ -17,7 +17,7 @@ export default function SettingScreen({navigation}) {
                   source={require('../../assets/icon-edit.png')}
                   style={styles.icon}
                 />
-                <Text style={styles.textStyle}>Edit Profile</Text>
+                <Text style={styles.textStyle}>Edit Company Profile</Text>
               </CardItem>
             </Card>
             <Card style={[styles.card, {marginLeft: '3%'}]}>

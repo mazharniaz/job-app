@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { 
   View, 
   StyleSheet,
-  SafeAreaView
+  SafeAreaView,
+  AsyncStorage
 } from 'react-native';
 import {
     Avatar,
@@ -23,9 +24,35 @@ import LinearGradient from 'react-native-linear-gradient';
 
 import { AuthContext } from '../context/Context'
 
-export default function DrawerEmployerContent(props) {
+export default class DrawerEmployerContent extends Component {
 
     //const { signOut } = React.useContext(AuthContext);
+
+    handlePress() {
+        this.props.navigation.reset({
+            index: 0,
+            routes: [{ name: 'SignInScreen' }],
+          });
+        this._storeData();
+    }
+
+    _storeData = async () => {
+        try {
+          let obj = {
+            email: '',
+          }
+    
+          await AsyncStorage.setItem(
+            'user', JSON.stringify(obj)        
+          );
+        } catch (error) {
+          alert(error)
+        }
+        const user = await AsyncStorage.getItem('user');
+        console.log(user, '----------->')
+      };
+
+   render(props) {
 
     return(
         <View style={{flex: 1}}>
@@ -62,7 +89,7 @@ export default function DrawerEmployerContent(props) {
                             />
                             )}
                             label="Home"
-                            onPress={() => {props.navigation.navigate('Home')}}
+                            onPress={() => {this.props.navigation.navigate('Home')}}
                         />
                         <DrawerItem style={styles.drawerItem}
                             icon={({color, size}) => (
@@ -73,7 +100,7 @@ export default function DrawerEmployerContent(props) {
                             />
                             )}
                             label="My Profile"
-                            onPress={() => {props.navigation.navigate('Profile')}}
+                            onPress={() => {this.props.navigation.navigate('Profile')}}
                         />
                         <DrawerItem style={styles.drawerItem}
                             icon={({color, size}) => (
@@ -84,7 +111,7 @@ export default function DrawerEmployerContent(props) {
                             />
                             )}
                             label="My Jobs"
-                            onPress={() => {props.navigation.navigate('MyJobs')}}
+                            onPress={() => {this.props.navigation.navigate('MyJobs')}}
                         />
                         <DrawerItem style={styles.drawerItem}
                             icon={({color, size}) => (
@@ -95,7 +122,7 @@ export default function DrawerEmployerContent(props) {
                             />
                             )}
                             label="My Earnings"
-                            onPress={() => {{props.navigation.navigate('MyEarnings')}}}
+                            onPress={() => {this.props.navigation.navigate('MyEarnings')}}
                         />
                         <DrawerItem style={styles.drawerItem}
                             icon={({color, size}) => (
@@ -106,7 +133,18 @@ export default function DrawerEmployerContent(props) {
                             />
                             )}
                             label="Support"
-                            onPress={() => {{props.navigation.navigate('SupportScreen')}}}
+                            onPress={() => {this.props.navigation.navigate('SupportScreen')}}
+                        />
+                        <DrawerItem style={styles.drawerItem}
+                            icon={({color, size}) => (
+                            <Icon 
+                                name="md-contacts"
+                                color={color}
+                                size={size}
+                            />
+                            )}
+                            label="Referal"
+                            onPress={() => {this.props.navigation.navigate('Refer')}}
                         />
                         <DrawerItem style={styles.drawerItem}
                             icon={({color, size}) => (
@@ -117,7 +155,7 @@ export default function DrawerEmployerContent(props) {
                             />
                             )}
                             label="Settings"
-                            onPress={() => {{props.navigation.navigate('Setting')}}}
+                            onPress={() => {this.props.navigation.navigate('Setting')}}
                         />
                         <DrawerItem style={styles.drawerItem}
                             icon={({color, size}) => (
@@ -142,14 +180,12 @@ export default function DrawerEmployerContent(props) {
                         />
                     )}
                     label="Sign Out"
-                    onPress={() => {props.navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'SignInScreen' }],
-                      });}}
+                    onPress={() => this.handlePress()}
                 />
             </Drawer.Section>
         </View>
     )
+  }
 }
 
 const styles = StyleSheet.create({

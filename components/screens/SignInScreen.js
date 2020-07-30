@@ -19,15 +19,17 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import Spinner from 'react-native-spinkit';
 
+import DrawerNavigationEmployer from '../drawer/DrawerNavigationEmployer'
 
-import { NavigationContainer } from '@react-navigation/native';
+
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import DrawerNavigation from "../drawer/DrawerNavigation"
 
 import { AuthContext } from '../context/Context';
 
 
 
-class SignInScreen extends Component {
+export default class SignInScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -35,19 +37,54 @@ class SignInScreen extends Component {
             data: {},
             user_id: '',
 
+            data2: {},
+            id: '',
+            app_token: '',
+
             email: '',
             password: '',
             check_textInputChange: false,
-            secureTextEntry: true
+            secureTextEntry: true,
+
+            userStatus: ''
         }
+        console.log(this.props, '----> STATTATATA')
+
     }
 
+    componentDidMount() {
+        this._retrieveUserID();
+    }
+
+    _retrieveUserID = async () => {
+        //console.log(this.state.user_id, '---> RETRIEVE USER ID')
+        try {
+            const userid = await AsyncStorage.getItem('userid');
+            const parse = JSON.parse(userid);
+      
+            this.setState({
+              id: parse.id
+            })
+            console.log(parse, '---> ID SIGNIN SCREEN')
+        } catch (error) {
+            //alert(error)
+            
+        }
+        
+    }
 
     userLogin(email, password) {
-        
-        const that = this;
 
-        let resp;
+        const that = this;
+        this._retrieveUserStatus();
+        
+        
+        
+        //const navigation = useNavigation();
+        //const { navigation } = this.props.navigation
+
+        console.log(this.state.userStatus, 'UserStatus ----->')
+
         let axiosConfig = {
             headers: {
                 'Content-Type': 'application/json;charset=UTF-8',
@@ -59,29 +96,98 @@ class SignInScreen extends Component {
           password: password
         }), axiosConfig)
           .then((response) => {
-            console.log(response.data, "lulu ====>")
-            resp = response;
+            console.log(response.data, "USER DATA ====>")
             this.setState({
                 isLoading: false,
                 data: response.data.login_credentials
            })
+
+           
            
            if(response.data.login_credentials === "Credentials not match to our records") {
             
                 alert('Email or Password is incorrect!')
             }
             else if(response.data.login_credentials.whoim === "employer") {
-                this._storeData();
-                that.props.navigation.navigate('DrawerEmployer'); 
+                 if(this.state.userStatus === 0) {
+                    this.props.navigation.navigate('EmailVerification');
+                 } else {
+                        // if(this.state.id === '!@14') {
+                        //     this.props.navigation.push('SignInScreen')
+                        // }
+                        // else {
+                            that._storeData();
+                            that.props.navigation.navigate('DrawerEmployer');
+                        //} 
+                 }
             }
             else if(response.data.login_credentials.whoim === "candidate") {
-                this._storeData();
-                that.props.navigation.navigate('DrawerCandidate');
+                if(that.state.userStatus === 0) {
+                    that.props.navigation.navigate('EmailVerification')
+                } else {
+                    //console.log(navigation, '----> NAIAIIAIAIIA')
+                    that._storeData();
+                    that.props.navigation.navigate('DrawerCandidate');
+                }
             }
         }, (error) => {
           console.log(error,"///////////////////////////////////");
         });
 
+      }
+
+    //   postToken = async (app_token) => {
+    //     try {
+    //       const user = await AsyncStorage.getItem('user');
+    //       const parse = JSON.parse(user);
+    
+    //       this.setState({
+    //         id: parse.user_id
+    //       })
+    
+        
+    //     let axiosConfig = {
+    //       headers: {
+    //           'Content-Type': 'application/json;charset=UTF-8',
+    //           "Access-Control-Allow-Origin": "*",
+    //       }
+    //     };
+    //     console.log(this.state.id, app_token, 'USERRRRRRRRRRR')
+    //     axios.post('http://myquickshift.com/app_api/send_app_token', JSON.stringify({
+    //       id: this.state.id,
+    //       app_token: this.state.app_token
+    //     }),axiosConfig)
+    //       .then((response) => {
+    //         console.log(response.data, "-----> Token response checker")
+    //         //resp = response;
+    //         this.setState({
+    //             isLoading: false,
+    //             data2: response.data
+    //        })
+    //        console.log(this.state.id, '----> ABCABCBAC')
+    //     }, (error) => {
+    //       console.log(error,"-----> Token error checker");
+    //     });
+    
+    //   } catch (error) {
+    //     alert(error)
+    //   }
+    // }
+
+      _retrieveUserStatus = async () => {
+          
+          try {
+            const user_status = await AsyncStorage.getItem('user_Status');
+            const parse = JSON.parse(user_status);
+            console.log(parse.app_token, '------> PARSE')
+            this.setState({
+                userStatus: parse.user_status,
+            })
+            this.postToken(parse.app_token)
+
+          } catch (error) {
+              //alert(error)
+          }
       }
 
       _storeData = async () => {
@@ -92,20 +198,45 @@ class SignInScreen extends Component {
             email: this.state.email,
             user_id: this.state.data.id
           }
-    
+
           await AsyncStorage.setItem(
             'user', JSON.stringify(obj)        
           );
+          this._retrieveUserStatus()
         } catch (error) {
           alert(error)
         }
         const user = await AsyncStorage.getItem('user');
-        console.log(user, '----------->')
+        console.log(user, '-----------> USER KA USER')
       };
+
+      _storeEmail = async () => {
+          
+        console.log(this.state.data, "----> UserID Checking")
+        try {
+          let obj = {
+            email: this.state.email,
+          }
+    
+          await AsyncStorage.setItem(
+            'email', JSON.stringify(obj)        
+          );
+        } catch (error) {
+          alert(error)
+        }
+      };
+
+      handlePress() {
+          this._storeEmail(this.state.email);
+          this.userLogin(this.state.email, this.state.password);
+          
+      }
     
         
 render(navigation) {
-     
+
+    //console.log(this.props.navigation.navigate, '----> NAVIGATION')
+    
     const textInputChange = (val) => {
         if(val.length != 0 ) {
             this.setState({
@@ -135,6 +266,8 @@ render(navigation) {
             secureTextEntry: !this.state.secureTextEntry
         })
     }
+
+    //const that = this;
 
     return(
         <View style={styles.container}>
@@ -171,7 +304,7 @@ render(navigation) {
                     : null}
                 </View>
 
-                <Text style={[styles.text_footer, {marginTop: 35}]}>Password</Text>
+                <Text style={styles.text_footer}>Password</Text>
 
                 <View style={styles.action}>
                     <FontAwesome 
@@ -203,12 +336,13 @@ render(navigation) {
                         }
                     </TouchableOpacity>
                 </View>
-                <Button title="Forgot Password" onPress={() => this.props.navigation.navigate('ForgotPassword')}>
-                    <Text>Forgot Password</Text>
-                </Button>
+
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('ForgotPassword')}>
+                    <Text style={{color: '#0066ff', marginTop: '2%'}}>Forgot Password?</Text>
+                </TouchableOpacity>
 
                 <View style={styles.button}>
-                <TouchableOpacity style={styles.signIn} onPress={() => this.userLogin(this.state.email, this.state.password)}>
+                <TouchableOpacity style={styles.signIn} onPress={() => this.handlePress()}>
                     <LinearGradient style={styles.signIn} colors={['#abec9e', '#0066ff']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
                         <Text style={[styles.textSign, {color: '#ffffff'}]}>Sign In</Text>
                     </LinearGradient>
@@ -228,7 +362,6 @@ render(navigation) {
   }
 }
 
-export default SignInScreen;
 
 const styles = StyleSheet.create({
     container : {

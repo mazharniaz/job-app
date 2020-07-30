@@ -45,11 +45,12 @@ export default class CandidateAllJobsDescription extends Component {
         this._retrieveCandidateAllJobData();
     }
 
-    _retrieveCandidateAllJobData = async (id, user_id) => {
+    _retrieveCandidateAllJobData = async () => {
         
         try {
           const candidate = await AsyncStorage.getItem('CandidateAllJob');
           const parse1 = JSON.parse(candidate);
+          console.log(parse1, '-----> PARSE 1')
 
           const user = await AsyncStorage.getItem('user');
           const parse2 = JSON.parse(user);
