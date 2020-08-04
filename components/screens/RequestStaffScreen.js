@@ -9,10 +9,11 @@ import {
 } from 'react-native';
 import { Container, Content, Form, Item, Input, Button, Label, Body, Icon, ListItem, Picker, Footer, Textarea } from 'native-base';
 import LinearGradient from 'react-native-linear-gradient';
-import ImagePicker from 'react-native-image-picker';
+//import ImagePicker from 'react-native-image-picker';
 import axios from 'axios';
 import Spinner from 'react-native-spinkit';
 import AsyncStorage from '@react-native-community/async-storage'; 
+import ImagePicker from 'react-native-image-crop-picker';
 //import { TextInput } from 'react-native-gesture-handler';
 //import { ActivityIndicator } from 'react-native-paper';
 
@@ -31,6 +32,7 @@ export default class RequestStaffScreen extends Component {
       data: {},
       category: {},
 
+      user_id: '',
       job_title: '',
       job_description: '',
       job_category: '',
@@ -41,6 +43,11 @@ export default class RequestStaffScreen extends Component {
       salary_offer: '', 
       closing_date: '',
       notification_email: '', 
+      total_days_for_hiring: '',
+      perday_total_times: '',
+      per_hour_salary: '',
+      image_code: '',
+      image_name: ''
     }
   }
 
@@ -62,6 +69,7 @@ export default class RequestStaffScreen extends Component {
   componentDidMount() {
     //let resp;
     //console.log('component ka lulu=======>')
+    this._retrieveUser();
     this._retrieve_address();
 
     //console.log(axiosConfig, "------->>>")
@@ -78,7 +86,24 @@ export default class RequestStaffScreen extends Component {
     });
   }
 
-  postAJob(job_title, job_description, job_category, job_location, Address, prezi_quotes, postal_date, salary_offer, closing_date, notification_email, image) {
+  _retrieveUser = async (user_id) => {
+    
+    try {
+      
+      const user = await AsyncStorage.getItem('user');
+      const parse = JSON.parse(user);
+
+      this.setState({ 
+          user_id: parse.user_id
+      })
+      console.log(parse.user_id, '---> USER ID ARAHI HAI')
+
+    } catch (error) {
+      alert(error)
+    }
+  };
+
+  postAJob() {
         let resp;
         let axiosConfig = {
             headers: {
@@ -87,19 +112,40 @@ export default class RequestStaffScreen extends Component {
             }
         };
         //console.log(this.state,"-----> Post a job state console")
-        console.log(job_title, job_description, job_category, job_location, Address, prezi_quotes, postal_date, salary_offer, closing_date, notification_email, image, "------->>>")
-        axios.post('http://production.myquickshift.com/app_api/PostAJob_api', JSON.stringify({
-          job_title: job_title,
-          job_description: job_description,
-          job_category: job_category,
+        //console.log(job_title, job_description, job_category, job_location, Address, prezi_quotes, postal_date, salary_offer, closing_date, notification_email, image, "------->>>")
+        console.log(this.state.user_id, '---> USER ID POST A JOB')
+        console.log( this.state.job_title,
+          this.state.job_description,
+          this.state.job_category,
+          this.state.job_location,
+          this.state.Address, 
+          this.state.prezi_quotes, 
+          this.state.postal_date, 
+          this.state.salary_offer, 
+          this.state.closing_date,
+          this.state.notification_email, 
+          this.state.total_days_for_hiring,
+          this.state.perday_total_times,
+          this.state.per_hour_salary,
+          this.state.image_code,
+          this.state.image_name, '---> CHECKER')
+        axios.post(`http://myquickshift.com/app_api/PostAJob_api/${this.state.user_id}`, JSON.stringify({
+          //user_id: this.state.user_id,
+          job_title: this.state.job_title,
+          job_description: this.state.job_description,
+          job_category: this.state.job_category,
           job_location: null,
-          Address: Address, 
-          prezi_quotes: prezi_quotes, 
-          postal_date: postal_date, 
-          salary_offer: salary_offer, 
-          closing_date: closing_date,
-          notification_email: notification_email, 
-          image: image
+          Address: this.state.Address, 
+          prezi_quotes: this.state.prezi_quotes, 
+          postal_date: this.state.postal_date, 
+          salary_offer: this.state.salary_offer, 
+          closing_date: this.state.closing_date,
+          notification_email: this.state.notification_email, 
+          total_days_for_hiring: this.state.total_days_for_hiring,
+          perday_total_times: this.state.perday_total_times,
+          per_hour_salary: this.state.per_hour_salary,
+          image_code: this.state.image_code,
+          image_name: this.state.image_name
         }),axiosConfig)
           .then((response) => {
             console.log(response.data, "-----> Post a job response checker")
@@ -109,48 +155,76 @@ export default class RequestStaffScreen extends Component {
                 data: response
            })
 
-           alert('Sucessful!!')
+           alert('Sucessful!')
         }, (error) => {
           console.log(error,"-----> Post a job error checker");
         });
   }
 
-  chooseImage = () => {
-    let options = {
-      title: 'Select Image',
-      // customButtons: [
-      //   { name: 'customOptionKey', title: 'Choose Photo from Custom Option' },
-      // ],
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-    ImagePicker.showImagePicker(options, (response) => {
-      console.log('Response = ', response);
+  ImagePicker = (fileUri) => {
+    ImagePicker.openPicker({
+        //multiple: true,
+        includeBase64: true
+      }).then(images => {
+        console.log(images);
 
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-        alert(response.customButton);
-      } else {
-        const source = { uri: response.uri };
+        console.log(images.data, '---> BINARY DATA')
 
-        // You can also display the image using data:
-        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-        // alert(JSON.stringify(response));s
-        console.log('response', JSON.stringify(response));
+        let Images = ''
+
+        let file = String(images.path).split("/")
+        let name = file[file.length-1]
+
+        console.log(name,"///////2323223")
+        //Images.push(name)
+
         this.setState({
-          filePath: response,
-          image: response.data,
-          fileUri: response.uri
-        });
-      }
-    });
-  }
+            image_code: images.data,
+            image_name: name
+            //filePath: images.data,
+            //fileUri: Images,
+            //image_code: binaryCode
+          });
+        console.log(this.state.image_name, '---> FILE URI')
+      });
+}
+
+  // chooseImage = () => {
+  //   let options = {
+  //     title: 'Select Image',
+  //     // customButtons: [
+  //     //   { name: 'customOptionKey', title: 'Choose Photo from Custom Option' },
+  //     // ],
+  //     storageOptions: {
+  //       skipBackup: true,
+  //       path: 'images',
+  //     },
+  //   };
+  //   ImagePicker.showImagePicker(options, (response) => {
+  //     console.log('Response = ', response);
+
+  //     if (response.didCancel) {
+  //       console.log('User cancelled image picker');
+  //     } else if (response.error) {
+  //       console.log('ImagePicker Error: ', response.error);
+  //     } else if (response.customButton) {
+  //       console.log('User tapped custom button: ', response.customButton);
+  //       alert(response.customButton);
+  //     } else {
+  //       const source = { uri: response.uri };
+
+  //       // You can also display the image using data:
+  //       // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+  //       // alert(JSON.stringify(response));s
+  //       console.log('response', JSON.stringify(response));
+  //       this.setState({
+  //         filePath: response,
+  //         image: response.data,
+  //         fileUri: response.uri
+  //       });
+  //     }
+  //   });
+  // }
 
   clearText() {
     this.setState({Address : ''})
@@ -214,11 +288,11 @@ export default class RequestStaffScreen extends Component {
                 <Label style={[styles.labelStyle, {marginLeft: '4%'}]}>Cover Image</Label>
                 
                 <View style={{flex:1, flexDirection: 'row', justifyContent: 'space-between'}}>
-                  <Button onPress={() => this.chooseImage()} small style={{marginLeft: '4%', width: 80, marginTop: '1%', marginBottom: '1%'}}>
+                  <Button onPress={() => this.ImagePicker()} small style={{marginLeft: '4%', width: 80, marginTop: '1%', marginBottom: '1%'}}>
                     <Text style={{color: '#FFFFFF', marginLeft: '20%'}}>Choose</Text>
                   </Button>
 
-                  <Label style={{fontSize: 12, color: 'grey', marginLeft: '1%', marginTop: '2%'}}>{this.state.fileUri}</Label>
+                  <Label style={{fontSize: 12, color: 'grey', marginLeft: '1%', marginTop: '2%'}}>{this.state.image_name}</Label>
                 </View>
 
                   <Text style={{fontSize: 11, color: 'grey', marginLeft: '4%'}}>(Recommended size 1400×600px)</Text>
@@ -283,20 +357,20 @@ export default class RequestStaffScreen extends Component {
                 <Input style={styles.inputStyle} onChangeText={text => this.setState({postal_date: text})} />
               </Item>
               <Item stackedLabel>
-                <Label style={styles.labelStyle}>Total days of hiring</Label>
-                <TextInput style={styles.inputStyle} onChangeText={text => this.setState({postal_date: text})} />
+                <Label style={styles.labelStyle}>Total days for hiring</Label>
+                <Input style={styles.inputStyle} keyboardType="number-pad" onChangeText={text => this.setState({total_days_for_hiring: text})} />
               </Item>
               <Item stackedLabel>
                 <Label style={styles.labelStyle}>Total Time per day</Label>
-                <Input style={styles.inputStyle} onChangeText={text => this.setState({postal_date: text})} />
+                <Input style={styles.inputStyle} keyboardType="number-pad" onChangeText={text => this.setState({perday_total_times: text})} />
               </Item>
               <Item stackedLabel>
                 <Label style={styles.labelStyle}>Per Hour Salary</Label>
-                <Input style={styles.inputStyle} onChangeText={text => this.setState({postal_date: text})} />
+                <Input style={styles.inputStyle} keyboardType="number-pad" onChangeText={text => this.setState({per_hour_salary: text})} />
               </Item>
               <Item stackedLabel>
                 <Label style={styles.labelStyle}>Salary Offer</Label>
-                <Input style={styles.inputStyle} onChangeText={text => this.setState({salary_offer: text})} />
+                <Input style={styles.inputStyle} keyboardType="number-pad" onChangeText={text => this.setState({salary_offer: text})} />
               </Item>
 
               <Item stackedLabel>
@@ -313,18 +387,21 @@ export default class RequestStaffScreen extends Component {
                       <TouchableOpacity 
                         style={styles.updateBtn} 
                         onPress={() => this.postAJob(
-                            this.state.job_title,
-                            this.state.job_description,
-                            this.state.image,
-                            this.state.job_category,
-                            this.state.job_location,
-                            this.state.Address,
-                            this.state.prezi_quotes,
-                            this.state.postal_date,
-                            this.state.salary_offer,
-                            this.state.closing_date,
-                            this.state.notification_email,
-                            this.state.image
+                          this.state.job_title,
+                          this.state.job_description,
+                          this.state.job_category,
+                          this.state.job_location,
+                          this.state.Address, 
+                          this.state.prezi_quotes, 
+                          this.state.postal_date, 
+                          this.state.salary_offer, 
+                          this.state.closing_date,
+                          this.state.notification_email, 
+                          this.state.total_days_for_hiring,
+                          this.state.perday_total_times,
+                          this.state.per_hour_salary,
+                          this.state.image_code,
+                          this.state.image_name
                         )}
                       >
                           <LinearGradient style={styles.updateBtn} colors={['#abec9e', '#0066ff']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>

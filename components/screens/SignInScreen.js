@@ -104,7 +104,7 @@ export default class SignInScreen extends Component {
 
            
            
-           if(response.data.login_credentials === "Credentials not match to our records") {
+           if(response.data.login_credentials === false) {
             
                 alert('Email or Password is incorrect!')
             }
@@ -116,18 +116,18 @@ export default class SignInScreen extends Component {
                         //     this.props.navigation.push('SignInScreen')
                         // }
                         // else {
-                            that._storeData();
-                            that.props.navigation.navigate('DrawerEmployer');
+                            this._storeData();
+                            this.props.navigation.navigate('DrawerEmployer');
                         //} 
                  }
             }
             else if(response.data.login_credentials.whoim === "candidate") {
-                if(that.state.userStatus === 0) {
-                    that.props.navigation.navigate('EmailVerification')
+                if(this.state.userStatus === 0) {
+                    this.props.navigation.navigate('EmailVerification')
                 } else {
                     //console.log(navigation, '----> NAIAIIAIAIIA')
-                    that._storeData();
-                    that.props.navigation.navigate('DrawerCandidate');
+                    this._storeData();
+                    this.props.navigation.navigate('DrawerCandidate');
                 }
             }
         }, (error) => {

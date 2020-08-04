@@ -60,7 +60,7 @@ export default class SplashScreen extends Component {
            })
            
             if(response.data.login_data === []) {
-                that.props.navigation.navigate('SignInScreen2'); 
+                that.props.navigation.navigate('SignInScreen'); 
             }
             else if(response.data.login_data[0].whoim === "employer") {
                 
@@ -92,7 +92,7 @@ export default class SplashScreen extends Component {
 
         } catch (error) {
             
-            this.props.navigation.navigate('SignInScreen2');
+            this.props.navigation.navigate('SignInScreen');
         }
       };
     

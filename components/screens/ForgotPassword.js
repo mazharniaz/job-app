@@ -38,7 +38,7 @@ export default class ForgotPassword extends Component {
             <Form style={{marginTop: '1%', marginRight: '5%'}}>
                 <Item stackedLabel style={styles.container}>
                     <Label>Enter your register email</Label>
-                    <Input onChangeText={text => this.setState({verification_code: text})} keyboardType="number-pad" />
+                    <Input onChangeText={text => this.setState({verification_code: text})} />
                 </Item>
 
                 <View style={styles.button}>

@@ -59,7 +59,7 @@ export default class ProfileScreen extends Component {
               this.setState({
                   isLoading: false,
                   data: response.data,
-
+                
                   email: response.data.All_data.email,
                   phone: response.data.All_data.phone,
                   name: response.data.All_data.name,
