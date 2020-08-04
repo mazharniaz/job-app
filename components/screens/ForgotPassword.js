@@ -11,8 +11,38 @@ export default class ForgotPassword extends Component {
         super(props);
         this.state = {
             isLoading: true,
-            data: {}
+            data: {},
+
+            email: ''
         }
+    }
+
+    forgetPassword_API() {
+        let axiosConfig = {
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+            }
+          };
+        console.log(this.state.email, " -----> email")
+          axios.post(`http://myquickshift.com/app_api/forget_password`, JSON.stringify({
+           email: this.state.email, 
+        }), axiosConfig)
+          .then((response) => {
+            console.log(response.data, "---> Forget Password response")
+            this.setState({
+                isLoading: false,
+                data: response
+           })
+
+           if(response.data.message === "mail send") {
+               this.props.navigation.navigate('ForgotPasswordCode')
+           } else if(response.data.message === "email not found") {
+               alert('Enter registered email!')
+           }
+        }, (error) => {
+          console.log(error,"---> Forget Password response error!");
+        });
     }
 
   render(navigation) {
@@ -38,11 +68,11 @@ export default class ForgotPassword extends Component {
             <Form style={{marginTop: '1%', marginRight: '5%'}}>
                 <Item stackedLabel style={styles.container}>
                     <Label>Enter your register email</Label>
-                    <Input onChangeText={text => this.setState({verification_code: text})} />
+                    <Input onChangeText={text => this.setState({email: text})} />
                 </Item>
 
                 <View style={styles.button}>
-                    <TouchableOpacity style={styles.signIn} onPress={() => this.props.navigation.navigate('ForgotPasswordCode')}>
+                    <TouchableOpacity style={styles.signIn} onPress={() => this.forgetPassword_API(this.state.email)}>
                         <LinearGradient style={styles.signIn} colors={['#abec9e', '#0066ff']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
                             <Text style={[styles.textSign, {color: '#ffffff'}]}>Next!</Text>
                         </LinearGradient>
