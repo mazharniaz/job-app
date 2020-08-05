@@ -11,13 +11,23 @@ import {
 import { GiftedChat, Bubble } from 'react-native-gifted-chat';
 import firebase from '../firebase/firbaseconf';
 import AsyncStorage from '@react-native-community/async-storage';
+import axios from 'axios';
+import Spinner from 'react-native-spinkit';
 
   export default class SupportChat extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isLoading: true,
+            admin_id: '',
+            data: {},
+
             messages: [],
-            user_id: ''
+            user_id: '',
+
+            image_name: '',
+            image_code: '',
+            message: ''
         }
     }
 
@@ -62,9 +72,30 @@ import AsyncStorage from '@react-native-community/async-storage';
       
     };
 
-    getMessage = async (user_id) => {
+    getAdminID() {
+      axios.get(`http://myquickshift.com/app_api/get_admin_id`)
+          .then((response) => {
+            console.log(response.data, "------> console log get Admin ID")
+            this.setState({
+                isLoading: false,
+                data: response.data,
 
+                admin_id: response.data.admin_id
+           })
+
+           this.getMessage();
+           
+        }, (error) => {
+          console.log(error,"------> console log get Admin ID error");
+        });
+
+    }
+
+    getMessage = async (user_id) => {
+      
+      
         try {
+          
           const user = await AsyncStorage.getItem('user');
           const parse = JSON.parse(user);
           this.setState({ user_id: parse.user_id})
@@ -74,7 +105,10 @@ import AsyncStorage from '@react-native-community/async-storage';
           const db = firebase.database().ref('user_id_' + this.state.user_id);
           console.log(db, '----> Checkin db')
 
-          const messages = db.child("messages/user_id_140");
+          //this.getAdminID()
+          console.log(this.state.admin_id, '---> ADMIN ID')
+
+          const messages = db.child(`messages/user_id_${this.state.admin_id}`);
           //console.log(notification, '----> Checking notification')
 
           //const list = messages.orderByKey().startAt('user_id');
@@ -95,7 +129,7 @@ import AsyncStorage from '@react-native-community/async-storage';
                             avatar: `https://ui-avatars.com/api/?name=${child.val().username}&rounded=true&background=0066ff&color=ffffff`,
                           }
                       }
-                      console.log(child.val().date,child.val().text, '---> cildsnap')
+                      console.log(child.val().date,child.val().text, '---> childsnap')
                       this.setState({messages:[...this.state.messages,message]});
                 //  })
             })
@@ -107,9 +141,36 @@ import AsyncStorage from '@react-native-community/async-storage';
 
     }
 
+    chatSend_API() {
+      let axiosConfig = {
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Access-Control-Allow-Origin": "*",
+        }
+      };
+    axios.post(`http://myquickshift.com/app_api/chat_send_api/${this.state.user_id}/${this.state.admin_id}`, JSON.stringify({
+      image_name: this.state.image_name, 
+      image_code: this.state.image_code,
+      message: this.state.message
+    }), axiosConfig)
+      .then((response) => {
+        console.log(response.data, "Chat Send console")
+        this.setState({
+            isLoading: false,
+       })
+
+    }, (error) => {
+      console.log(error,"Chat Send console error!");
+    });
+
+    }
+
     componentDidMount() {
+      this.getAdminID()
+      
+      
         //this._retrieveData();
-        this.getMessage();
+        
         //console.log(this.state.user_id, '---> IDIDIDIDID')
         
         // this.setState({
@@ -129,6 +190,7 @@ import AsyncStorage from '@react-native-community/async-storage';
       }
 
       onSend(messages = []) {
+        this.chatSend_API(this.state.image_name, this.state.image_code, this.state.message)
         this.setState(previousState => ({
           messages: GiftedChat.append(previousState.messages, messages),
         }))
@@ -136,7 +198,14 @@ import AsyncStorage from '@react-native-community/async-storage';
     
 
     render(navigation) {
+      if(this.state.isLoading) {
         return(
+            <View style={{flex: 1, alignItems: "center", justifyContent: 'center'}}>
+                <Spinner type='FadingCircleAlt' color='#0066ff' />
+            </View>
+        )
+      } else {
+          return(
             <GiftedChat
                 messages={this.state.messages}
                 onSend={messages => this.onSend(messages)}
@@ -145,6 +214,8 @@ import AsyncStorage from '@react-native-community/async-storage';
                 }}
           /> 
         )
+      }
+        
     }
 } 
 

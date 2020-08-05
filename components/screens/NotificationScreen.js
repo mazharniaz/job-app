@@ -10,6 +10,7 @@ import firebase from '../firebase/firbaseconf';
 import AsyncStorage from '@react-native-community/async-storage';
 import { ScrollView } from 'react-native-gesture-handler';
 import Spinner from 'react-native-spinkit';
+import moment from "moment";
 
 export default class NotificationScreen extends Component {
     constructor(props) {
@@ -17,7 +18,7 @@ export default class NotificationScreen extends Component {
       this.state = {
         isLoading: true,
         user_id: '',
-        value: ''
+        data: [],
       }
     }    
 
@@ -42,17 +43,28 @@ export default class NotificationScreen extends Component {
 
         //const list = messages.orderByKey().startAt('user_id');
     
-        notifications.on("value",snapshot => {
-            snapshot.forEach(child => {
-               child.forEach(subch =>{
-                 console.log(subch.val(),"))))((((((")
-               })
-                console.log(child.val(), '---> chld val()')  
+        notifications.on("value", snapshot => {
+           snapshot.forEach(child => {
+              //console.log(child.val(), '------> child Value')
+              //  child.forEach(subch => {
+              //    console.log(subch.val(),"---> subch Value")
+                  console.log('--- CONSOLE ---')
+                  
+                  let join = this.state.data.concat(child.val())
+                  this.setState({
+                    isLoading: false,
+                    data: join
+                  })
+                 
+               //})
+               //console.log(child.val(), '---> chld val()') 
+               
+              //  this.setState({
+              //   isLoading: false,
+              //   //value: child.val()
+              // })
 
-                this.setState({
-                  isLoading: false,
-                  value: child.val()
-                })
+                
                         
                 // child.forEach(childsnap => {
                   // console.log(this.state.user_id, '----> ------> user ID')
@@ -79,6 +91,28 @@ export default class NotificationScreen extends Component {
   }
 
   notification_list() {
+    console.log(this.state.data,'-----> STATES')
+    return this.state.data.map((element, i) => {
+      return (
+        <Card style={styles.cardStyle}>
+            <CardItem style={{borderRadius: 10}}>
+              <Left style={{flex: 1, justifyContent: 'space-between'}}>
+              <Text style={styles.textStyle} numberOfLines={2}>
+                {element.text}
+              </Text>
+              </Left>
+              <Right>
+                <Text style={styles.timeStyle}>
+                  {
+                    element.date
+                  }
+                </Text>
+              </Right>
+          </CardItem>
+        </Card>
+       )
+    })
+    
     // console.log(this.state.value,"////=====")
     // for(let ele of this.state.value){
     //   console.log(ele,"===Atif lund he ")
