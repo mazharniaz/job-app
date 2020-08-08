@@ -59,6 +59,7 @@ export default class EmailVerification2 extends Component {
 
        if(response.data.status === 'Email Verified SuccessFully') {
            alert('Verification Successful!')
+           this.props.navigation.navigate('SignInScreen')
        } else {
            alert('Try again!')
        }

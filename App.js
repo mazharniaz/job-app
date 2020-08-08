@@ -73,18 +73,18 @@ class App extends Component {
         id: parse.user_id
       })
 
-    if(this.state.id === '') {
-      try {
-        let obj = {
-          id: '!@14' 
-        }
-        await AsyncStorage.setItem(
-          'userid', JSON.stringify(obj)        
-        );
-      } catch (error) {
-        alert(error)
-      }
-    }
+    // if(this.state.id === '') {
+    //   try {
+    //     let obj = {
+    //       id: '!@14' 
+    //     }
+    //     await AsyncStorage.setItem(
+    //       'userid', JSON.stringify(obj)        
+    //     );
+    //   } catch (error) {
+    //     alert(error)
+    //   }
+    // }
     } catch (error) {
         //alert(error)
         console.log(parse.user_id, '----> APP KA PARSE 1')
@@ -151,12 +151,12 @@ class App extends Component {
 
   async componentDidMount() {
     
-    if(!this.state.isLoading) {
-      console.log('sjadjasijasidjaisjdiajdsiajdsisajdasjd')
-      console.log(this.state.data, '----> ABCV')
+    // if(!this.state.isLoading) {
+    //   console.log('sjadjasijasidjaisjdiajdsiajdsisajdasjd')
+    //   console.log(this.state.data, '----> ABCV')
 
       
-    }
+    // }
 
     this._UpdateUserID(this.state.id);
 

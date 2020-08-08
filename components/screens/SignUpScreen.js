@@ -17,6 +17,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import axios from 'axios';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class SignUpScreen extends Component {
 
@@ -68,7 +69,7 @@ class SignUpScreen extends Component {
             }
         };
         console.log(name,email,password,whoim, "------->>>")
-        axios.post('http://production.myquickshift.com/app_api/register_api', JSON.stringify({
+        axios.post('http://myquickshift.com/app_api/register_api', JSON.stringify({
             name: name,
             email: email, 
             password: password,
@@ -78,7 +79,7 @@ class SignUpScreen extends Component {
             console.log(response.data, "REGISTER ====>")
             resp = response;
             this.setState({
-                isLoading: true,
+                isLoading: false,
                 data: response
            })
 

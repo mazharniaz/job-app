@@ -91,7 +91,7 @@ export default class SignInScreen extends Component {
                 "Access-Control-Allow-Origin": "*",
             }
           };
-        axios.post('http://production.myquickshift.com/app_api/login_api', JSON.stringify({
+        axios.post('http://myquickshift.com/app_api/login_api', JSON.stringify({
            email: email, 
           password: password
         }), axiosConfig)
@@ -102,27 +102,20 @@ export default class SignInScreen extends Component {
                 data: response.data.login_credentials
            })
 
-           
-           
            if(response.data.login_credentials === false) {
             
                 alert('Email or Password is incorrect!')
             }
             else if(response.data.login_credentials.whoim === "employer") {
-                 if(this.state.userStatus === 0) {
+                 if(response.data.login_credentials.is_active === "non_active") {
                     this.props.navigation.navigate('EmailVerification');
                  } else {
-                        // if(this.state.id === '!@14') {
-                        //     this.props.navigation.push('SignInScreen')
-                        // }
-                        // else {
-                            this._storeData();
-                            this.props.navigation.navigate('DrawerEmployer');
-                        //} 
+                        this._storeData();
+                        this.props.navigation.navigate('DrawerEmployer');
                  }
             }
             else if(response.data.login_credentials.whoim === "candidate") {
-                if(this.state.userStatus === 0) {
+                if(response.data.login_credentials.is_active === "non_active") {
                     this.props.navigation.navigate('EmailVerification')
                 } else {
                     //console.log(navigation, '----> NAIAIIAIAIIA')
@@ -183,7 +176,7 @@ export default class SignInScreen extends Component {
             this.setState({
                 userStatus: parse.user_status,
             })
-            this.postToken(parse.app_token)
+            //this.postToken(parse.app_token)
 
           } catch (error) {
               //alert(error)
