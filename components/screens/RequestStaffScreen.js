@@ -134,7 +134,7 @@ export default class RequestStaffScreen extends Component {
           job_title: this.state.job_title,
           job_description: this.state.job_description,
           job_category: this.state.job_category,
-          job_location: null,
+          job_location: this.state.job_location,
           Address: this.state.Address, 
           prezi_quotes: this.state.prezi_quotes, 
           postal_date: this.state.postal_date, 
@@ -151,7 +151,7 @@ export default class RequestStaffScreen extends Component {
             console.log(response.data, "-----> Post a job response checker")
             resp = response;
             this.setState({
-                isLoading: true,
+                isLoading: false,
                 data: response
            })
 
@@ -346,6 +346,11 @@ export default class RequestStaffScreen extends Component {
               </Item>
 
               <Text style={{fontSize: 11, color: 'grey', marginLeft: '4%'}}>Enter Street, Region, Locality, Country. e.g. 1600 Chestnut Street, Philadelphia, PA, USA</Text>
+              
+              <Item stackedLabel>
+                <Label style={styles.labelStyle}>Location</Label>
+                <Input style={styles.inputStyle} onChangeText={text => this.setState({job_location: text})} />
+              </Item>
               
               <Item stackedLabel>
                 <Label style={styles.labelStyle}>Prerequisite (Optional)</Label>

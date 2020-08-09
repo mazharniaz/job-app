@@ -12,6 +12,8 @@ import ChatScreen from "../screens/ChatScreen"
 import ProfileScreen from "../screens/ProfileScreen"
 import CompanyProfileScreen from '../screens/CompanyProfileScreen'
 import { Header, Item, Text, Button, Input } from 'native-base'
+//import JobSearchScreen from '../screens/JobSeachScreen';
+import JobSearchScreen2 from '../screens/JobSearchScreen2';
 
 
 let qqqq=""
@@ -194,7 +196,7 @@ const SearchStackScreen = ({navigation}) => (
     <SearchStack.Navigator screenOptions={{
       headerShown: false  
     }}>
-        <SearchStack.Screen name="Search" component={SearchScreen} />
+        <SearchStack.Screen name="Search" component={JobSearchScreen2} />
     </SearchStack.Navigator>
 );
 

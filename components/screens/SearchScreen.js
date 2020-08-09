@@ -140,7 +140,7 @@ export default class SearchScreen extends Component {
       list = () => {
         
         return this.state.data.jobs_search_list.map((element, i) => {
-          console.log(element["0"].per_hour_salary, '--------> ELEMENT')
+          //console.log(element["0"].per_hour_salary, '--------> ELEMENT')
           return (
             <TouchableOpacity /*onPress={() => this.handlePress(element.id)}*/ >
               <Card style={styles.cardStyle} key={i}>
@@ -152,23 +152,23 @@ export default class SearchScreen extends Component {
                           <Body style={{marginTop: 2}}>
                               
                               <Text note style={{fontSize: 8}}>jhdkjhakjdhjkahsd</Text>
-                              <Text style={{fontSize: 12}}>{element.job_title}</Text>
-                              <Text note style={{fontSize: 8}}>{element.Address}</Text>
+                              <Text style={{fontSize: 12}}>job title</Text>
+                              <Text note style={{fontSize: 8}}>job address</Text>
 
                               <CardItem style={{marginTop:0}}>
                                   <Left style={{marginLeft: '-11%'}}>
                                       <Body style={{borderRightColor: '#000000', borderRightWidth: 1}}>
                                           <Text style={{fontSize: 8}}>Total Pay</Text>
-                                          <Text style={{fontSize: 8}}>{element.salary_offer}</Text>
+                                          <Text style={{fontSize: 8}}>salary offer</Text>
                                       </Body>
                                   </Left>
                                   <Body style={{marginLeft: '5%', borderRightColor: '#000000', borderRightWidth: 1}}>
                                       <Text style={{fontSize: 8}}>Per hour</Text>
-                                      <Text style={{fontSize: 8}}>{element["0"].per_hour_salary}</Text>
+                                      <Text style={{fontSize: 8}}>per_hour_salary</Text>
                                   </Body>
                                   <Body style={{marginLeft: '5%'}}>
                                       <Icon type="FontAwesome" name="street-view" style={{fontSize: 12}} /> 
-                                      <Text style={{fontSize: 8}}>{element.job_location}</Text>
+                                      <Text style={{fontSize: 8}}>job location</Text>
                                   </Body>
                               </CardItem>
 
