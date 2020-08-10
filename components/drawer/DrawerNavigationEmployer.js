@@ -32,6 +32,7 @@ import SearchScreenJobDetails from '../screens/SearchScreenJobDetails';
 import CandidateActiveJobs from '../screens/CandidateActiveJobs'
 import ApplyJobScreen from '../screens/ApplyJobScreen';
 import ReferalScreen from '../screens/ReferalScreen';
+import JobBlockerScreen from '../screens/JobBlockerScreen';
 
 const HomeStack = createStackNavigator();
 const SearchStack = createStackNavigator();
@@ -49,12 +50,13 @@ const SearchScreenJobDetailsStack = createStackNavigator();
 const ReferalStack = createStackNavigator();
 const CandidateActiveJobStack = createStackNavigator();
 const ApplyJobStack = createStackNavigator();
+const JobBlockerStack = createStackNavigator();
 
 const Drawer = createDrawerNavigator();
 
 export default class DrawerNavigationEmployer extends Component {
     render(navigation) {
-        console.log(navigation, '----> NAVIGATION DRAWER')
+
         return(
             
               <Drawer.Navigator drawerContent={props => <DrawerEmployerContent {... props} />}>
@@ -74,11 +76,39 @@ export default class DrawerNavigationEmployer extends Component {
                   <Drawer.Screen name="SearchScreenJobDetails" component={SearchScreenJobDetailsStackScreen} />
                   <Drawer.Screen name="ApplyJob" component={ApplyJobStackScreen} />
                   <Drawer.Screen name="Refer" component={ReferalStackScreen} />
+                  <Drawer.Screen name="JobBlocker" component={JobBlockerStackScreen} />
               </Drawer.Navigator>
              
         )
     }
   }
+
+  const JobBlockerStackScreen = ({navigation}) => (
+    <JobBlockerStack.Navigator screenOptions={{
+        headerStyle: {
+            backgroundColor: "#0066ff",
+            height: 45
+        },
+        headerTintColor: "#FFFFFF",
+        headerTitleStyle: {
+            fontSize: 18
+        },
+        headerTitleAlign: 'center',
+        headerTitle: 'Approval Pending'
+    }}>
+        <JobBlockerStack.Screen name="JobBlocker" component={JobBlockerScreen} options={{
+            headerLeft: () => (
+                <Icon.Button 
+                name="md-menu" 
+                size={24} 
+                backgroundColor= "#0066ff"
+                onPress={() => {navigation.openDrawer();}}
+                />
+            )
+        }} />
+    </JobBlockerStack.Navigator>
+  );
+
 
   const ReferalStackScreen = ({navigation}) => (
     <ReferalStack.Navigator screenOptions={{

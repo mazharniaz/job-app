@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { 
   View, 
   StyleSheet,
-  SafeAreaView,
-  AsyncStorage
+  SafeAreaView
 } from 'react-native';
 import {
     Avatar,
@@ -21,12 +20,37 @@ import {
 } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import { AuthContext } from '../context/Context'
 
 export default class DrawerEmployerContent extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: true,
+            is_active: ''
+        }
+    }
 
     //const { signOut } = React.useContext(AuthContext);
+
+    componentDidMount() {
+        this._retreieveApproveStatus()
+    }
+
+    _retreieveApproveStatus = async () => {
+        try {
+            const Is_Active = await AsyncStorage.getItem('ApproveStatus');
+            const parse = JSON.parse(Is_Active);
+            this.setState({ is_active: parse.is_active})
+
+            console.log(parse.is_active, '---> ACTIVE STATUS')
+          
+          } catch (error) {
+            alert(error)
+          }
+    }
 
     handlePress() {
         this.props.navigation.reset({
@@ -51,6 +75,14 @@ export default class DrawerEmployerContent extends Component {
         const user = await AsyncStorage.getItem('user');
         console.log(user, '----------->')
       };
+
+      handleJobNavigation() {
+          if(this.state.is_active === "Approved") {
+            this.props.navigation.navigate('MyJobs')
+          } else {
+            this.props.navigation.navigate('JobBlocker')
+          }
+      }
 
    render(props) {
 
@@ -111,7 +143,7 @@ export default class DrawerEmployerContent extends Component {
                             />
                             )}
                             label="My Jobs"
-                            onPress={() => {this.props.navigation.navigate('MyJobs')}}
+                            onPress={() => {this.handleJobNavigation()}}
                         />
                         <DrawerItem style={styles.drawerItem}
                             icon={({color, size}) => (

@@ -46,7 +46,9 @@ export default class SignInScreen extends Component {
             check_textInputChange: false,
             secureTextEntry: true,
 
-            userStatus: ''
+            userStatus: '',
+
+            is_active: ''
         }
         console.log(this.props, '----> STATTATATA')
 
@@ -99,7 +101,9 @@ export default class SignInScreen extends Component {
             console.log(response.data, "USER DATA ====>")
             this.setState({
                 isLoading: false,
-                data: response.data.login_credentials
+                data: response.data.login_credentials,
+
+                is_active: response.data.login_credentials.is_active
            })
 
            if(response.data.login_credentials === false) {
@@ -120,6 +124,7 @@ export default class SignInScreen extends Component {
                 } else {
                     //console.log(navigation, '----> NAIAIIAIAIIA')
                     this._storeData();
+                    this._storeApproveStatus(this.state.is_active);
                     this.props.navigation.navigate('DrawerCandidate');
                 }
             }
@@ -209,10 +214,27 @@ export default class SignInScreen extends Component {
         try {
           let obj = {
             email: this.state.email,
+            is_active: this.state.is_active
           }
     
           await AsyncStorage.setItem(
             'email', JSON.stringify(obj)        
+          );
+        } catch (error) {
+          alert(error)
+        }
+      };
+
+      _storeApproveStatus = async () => {
+          
+        //console.log(this.state.data, "----> UserID Checking")
+        try {
+          let obj = {
+            is_active: this.state.is_active
+          }
+    
+          await AsyncStorage.setItem(
+            'ApproveStatus', JSON.stringify(obj)        
           );
         } catch (error) {
           alert(error)

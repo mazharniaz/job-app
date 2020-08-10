@@ -7,6 +7,8 @@ import {
     KeyboardAvoidingView,
     SafeAreaView,
     Platform,
+    Image,
+    TouchableOpacity,
     PermissionsAndroid
 } from 'react-native';
 //import { GiftedChat, Bubble } from 'react-native-gifted-chat';
@@ -15,6 +17,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import Spinner from 'react-native-spinkit';
 import { ChatScreen } from 'react-native-easy-chat-ui';
+import Animated from 'react-native-reanimated';
+import ImagePicker from 'react-native-image-crop-picker';
 
 export default class SupportChat extends Component {
   constructor(props) {
@@ -24,7 +28,8 @@ export default class SupportChat extends Component {
       data: {},
       admin_id: '',
       user_id: '',
-      
+      image_data:null,
+      useplus:true,
       inverted: true,
       userProfile: {
         id:'',
@@ -33,12 +38,33 @@ export default class SupportChat extends Component {
       },
       messages: [],
       image_name: '',
-      image_code: ''
+      image_code: '',
+
+      panelSource: [
+        { 
+          icon: <Image source={{uri: 'https://images.unsplash.com/photo-1516724562728-afc824a36e84?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1502&q=80'}} style={{ width: 30, height: 30 }} />,
+          title: 'Camera',
+        }, {
+          icon: <Image source={require('../../assets/facebook.png')} style={{ width: 30, height: 30 }} />,
+          title: 'Photo'
+        }
+      ]
     }
   }
 
+  animatedValue = new Animated.Value(0);
+
   componentDidMount() {
+
+    Animated.timing(this.animatedValue,
+      {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true
+      }).start();
+
     this.getAdminID();
+
   }
 
       getAdminID() {
@@ -98,6 +124,44 @@ export default class SupportChat extends Component {
                     console.log(this.state.user_id, '----> ------> user ID')
                     let message=[]
                       console.log(typeof(child.val().user_id), typeof(this.state.user_id), '-----> USERIDDDDD')
+                     if(child.val().hasfiles==1){
+                        message = {
+                          id: `${new Date().getTime()}`,
+                          type: 'image',
+                          content: {
+                            uri: `https://www.myquickshift.com//public/chatting_files/${child.val().files}`,
+                            width: 100,
+                            height: 80,
+                          }, 
+                          targetId:parseInt(child.val().user_id),
+                          chatInfo: {
+                            avatar: `https://ui-avatars.com/api/?name=${child.val().username}&rounded=true&background=0066ff&color=ffffff`,
+                            id: 12345678,
+                            nickName: child.val().username
+                          },
+                          renderTime: true,
+                          sendStatus: 0,
+                          time: `${new Date().getTime()}`
+                        }
+                        this.setState({messages:[...this.state.messages, message]},console.log('dfdf', '-->MESSAGES'));
+                        message = {
+                          id: `${new Date().getTime()}`,
+                          type: 'text',
+                          content: child.val().text,
+                          targetId: parseInt(child.val().user_id),
+                          chatInfo: {
+                            avatar: `https://ui-avatars.com/api/?name=${child.val().username}&rounded=true&background=0066ff&color=ffffff`,
+                            id: 12345678,
+                            nickName: child.val().username
+                          },
+                          renderTime: true,
+                          sendStatus: 1,
+                          time: child.val().date
+                        }
+                        this.setState({messages:[...this.state.messages, message]},console.log('dfdf', '-->MESSAGES'));
+
+                      }
+                      else{
                       message = {
                         id: `${new Date().getTime()}`,
                         type: 'text',
@@ -106,17 +170,32 @@ export default class SupportChat extends Component {
                         chatInfo: {
                           avatar: `https://ui-avatars.com/api/?name=${child.val().username}&rounded=true&background=0066ff&color=ffffff`,
                           id: 12345678,
-                          nickName: 'Test'
+                          nickName: child.val().username
                         },
                         renderTime: true,
                         sendStatus: 1,
                         time: child.val().date
                       }
-                    
+                      this.setState({messages:[...this.state.messages, message]},console.log('dfdf', '-->MESSAGES'));
+
+                    }
+                    /* message = {
+                      id: `${new Date().getTime()}`,
+                      type: 'text',
+                      content: child.val().text,
+                      targetId: parseInt(child.val().user_id),
+                      chatInfo: {
+                        avatar: `https://ui-avatars.com/api/?name=${child.val().username}&rounded=true&background=0066ff&color=ffffff`,
+                        id: 12345678,
+                        nickName: child.val().username
+                      },
+                      renderTime: true,
+                      sendStatus: 1,
+                      time: child.val().date
+                    } */
                     
                       //console.log(count, '---> childsnap')
                    //   console.log(message,"***************************************")
-                      this.setState({messages:[...this.state.messages, message]},console.log('dfdf', '-->MESSAGES'));
                      // count+=1;
                       console.log(this.state.messages)
                 //  })
@@ -132,14 +211,47 @@ export default class SupportChat extends Component {
 
     }
 
+    ImagePicker = (fileUri) => {
+      ImagePicker.openPicker({
+          //multiple: true,
+          includeBase64: true
+        }).then(images => {
+          console.log(images);
+  
+         // console.log(images.data, '---> BINARY DATA')
+  
+          let Images = ''
+  
+          let file = String(images.path).split("/")
+          let name = file[file.length-1]
+  
+          console.log(name,"///////2323223")
+          //Images.push(name)
+  
+          this.setState({
+              image_code: images.data,
+              image_data:images,
+              image_name: name,
+              useplus:false
+              //filePath: images.data,
+              //fileUri: Images,
+              //image_code: binaryCode
+            });
+            
+            this.imageMessage();
+         // console.log(this.state.image_data, '---> FILE URI')
+        });
+  }
+
     chatSend_API(text) {
+      
       let axiosConfig = {
         headers: {
             'Content-Type': 'application/json;charset=UTF-8',
             "Access-Control-Allow-Origin": "*",
         }
       };
-      axios.post(`http://myquickshift.com/app_api/chat_send_api/${this.state.user_id}/${this.state.admin_id}`, JSON.stringify({
+      axios.post(`http://myquickshift.com/app_api/chat_send_api/${this.state.admin_id}/${this.state.user_id}`, JSON.stringify({
         image_name: this.state.image_name, 
         image_code: this.state.image_code,
         message: text
@@ -148,6 +260,7 @@ export default class SupportChat extends Component {
           console.log(response.data, "Chat Send console")
           this.setState({
               isLoading: false,
+              useplus:true
         })
 
       }, (error) => {
@@ -159,10 +272,21 @@ export default class SupportChat extends Component {
     sendMessage = (type, content, isInverted) => {
       this.chatSend_API(content)
       console.log(type, content, isInverted, 'msg')
+
+    }
+
+    imageMessage = (type, content, isInverted) => {
+      //this.chatSend_API(content)
+
+      console.log(type, content, isInverted, 'picmsg')
       let messagem = {
         id: `${new Date().getTime()}`,
-        type: 'text',
-        content: content,
+        type: 'image',
+        content: {
+          uri:`data:image/gif;base64,${this.state.image_code}`,
+          width: 100,
+          height: 80,
+        }, 
         targetId:this.state.user_id,
         chatInfo: {
           avatar: `https://ui-avatars.com/api/?name=GG&rounded=true&background=0066ff&color=ffffff`,
@@ -175,21 +299,48 @@ export default class SupportChat extends Component {
       }
 
       this.setState({messages:[...this.state.messages, messagem]},console.log(this.state.messages, '-->MESSAGES'));
-
     }
 
+    renderPanelRow = (data, index) => {
+      return <TouchableOpacity
+      key={index}
+      style={{ width: 50,
+        height: 50,
+        marginTop: '5%',
+        marginLeft: '5%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20 }}
+      activeOpacity={0.7}
+      onPress={() => this.ImagePicker()}
+    >
+      <View style={{ backgroundColor: '#fff', borderRadius: 8, padding: 15, borderColor: '#ccc', borderWidth: StyleSheet.hairlineWidth }}>
+        {data.icon}
+      </View>
+      <Text style={{ color: '#7a7a7a', marginTop: 10 }}>{data.title}</Text>
+    </TouchableOpacity>
+    }
+    
 
   render(navigation) {
     return (
-      <ChatScreen
-        ref={(e) => this.chat = e}
-        messageList={this.state.messages}
-        //androidHeaderHeight={androidHeaderHeight}
-        sendMessage={this.sendMessage}
-        userProfile={this.state.userProfile}
-        placeholder="Type here.."
-        useVoice={false}
-      />
+        <ChatScreen
+          ref={(e) => this.chat = e}
+          messageList={this.state.messages}
+          //androidHeaderHeight={androidHeaderHeight}
+          sendMessage={this.sendMessage}
+          userProfile={this.state.userProfile}
+          placeholder="Type here.."
+          useVoice={false}
+          panelSource={this.state.panelSource}
+          renderPanelRow={this.renderPanelRow}
+          usePopView={true}
+          usePlus={this.state.useplus}
+     //   renderImageMessage={this.imageMessage}
+          
+        />
+        
+      
     )
   }
 }
