@@ -29,7 +29,11 @@ export default class DrawerEmployerContent extends Component {
         super(props);
         this.state = {
             isLoading: true,
-            is_active: ''
+            is_active: '',
+            image: '',
+            name: '',
+            city: '',
+            county: ''
         }
     }
 
@@ -43,7 +47,13 @@ export default class DrawerEmployerContent extends Component {
         try {
             const Is_Active = await AsyncStorage.getItem('ApproveStatus');
             const parse = JSON.parse(Is_Active);
-            this.setState({ is_active: parse.is_active})
+            this.setState({ 
+                is_active: parse.is_active,
+                image: parse.image,
+                name: parse.name,
+                city: parse.city,
+                county: parse.county
+            })
 
             console.log(parse.is_active, '---> ACTIVE STATUS')
           
@@ -64,6 +74,10 @@ export default class DrawerEmployerContent extends Component {
         try {
           let obj = {
             email: '',
+            image: '',
+            name: '',
+            city: '',
+            county: ''
           }
     
           await AsyncStorage.setItem(
@@ -97,13 +111,13 @@ export default class DrawerEmployerContent extends Component {
                         <View style={{flexDirection: 'row', marginTop: 15}}>
                             <Avatar.Image 
                                 source={{
-                                    uri: 'https://cdn.pixabay.com/photo/2017/09/18/16/11/building-2762241_960_720.jpg'
+                                    uri: `http://myquickshift.com/public/UserImages/${this.state.image}`
                                 }}
                                 size={50}
                             />
                             <View style={{flexDirection: 'column', marginLeft: 15}}>
-                                <Title style={[styles.title, {color: '#FFFFFF'}]}>Clay Jensen</Title>
-                                <Caption style={[styles.caption, {color: '#FFFFFF'}]}>XYZ Street, LONDON UK</Caption>
+                                <Title style={[styles.title, {color: '#FFFFFF'}]}>{this.state.name}</Title>
+                                <Caption style={[styles.caption, {color: '#FFFFFF'}]}>{this.state.city}, {this.state.county}</Caption>
                             </View>
                         </View>
                     </View>

@@ -63,7 +63,7 @@ export default class JobBlockerScreen extends Component {
                     <Spinner type='FadingCircleAlt' color='#0066ff' />
                 </View>
             )
-          } else if(this.state.data === []) {
+          } else if(this.state.data.interview_list === []) {
                 return (
                     <View>
                         <Text>

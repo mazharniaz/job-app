@@ -140,7 +140,7 @@ _retrieveUser = async (user_id) => {
                 isLoading: false,
                 data: response.data,
            })
-           alert('Data updated successfully!')
+           alert('Profile updated successfully!')
         }, (error) => {
           console.log(error,"------> console log Edit Company Profile error");
         });

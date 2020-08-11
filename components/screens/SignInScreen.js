@@ -48,7 +48,12 @@ export default class SignInScreen extends Component {
 
             userStatus: '',
 
-            is_active: ''
+            is_active: '',
+
+            image: '',
+            name: '',
+            city: '',
+            county: ''
         }
         console.log(this.props, '----> STATTATATA')
 
@@ -103,7 +108,11 @@ export default class SignInScreen extends Component {
                 isLoading: false,
                 data: response.data.login_credentials,
 
-                is_active: response.data.login_credentials.is_active
+                is_active: response.data.login_credentials.is_active,
+                image: response.data.login_credentials.image,
+                name: response.data.login_credentials.name,
+                city: response.data.login_credentials.city,
+                county: response.data.login_credentials.county
            })
 
            if(response.data.login_credentials === false) {
@@ -230,7 +239,11 @@ export default class SignInScreen extends Component {
         //console.log(this.state.data, "----> UserID Checking")
         try {
           let obj = {
-            is_active: this.state.is_active
+            is_active: this.state.is_active,
+            image: this.state.image,
+            name: this.state.name,
+            city: this.state.city,
+            county: this.state.county
           }
     
           await AsyncStorage.setItem(

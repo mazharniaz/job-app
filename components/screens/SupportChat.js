@@ -44,10 +44,10 @@ export default class SupportChat extends Component {
         { 
           icon: <Image source={{uri: 'https://images.unsplash.com/photo-1516724562728-afc824a36e84?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1502&q=80'}} style={{ width: 30, height: 30 }} />,
           title: 'Camera',
-        }, {
-          icon: <Image source={require('../../assets/facebook.png')} style={{ width: 30, height: 30 }} />,
-          title: 'Photo'
-        }
+        }, // {
+        //   icon: <Image source={require('../../assets/facebook.png')} style={{ width: 30, height: 30 }} />,
+        //   title: 'Photo'
+        // }
       ]
     }
   }

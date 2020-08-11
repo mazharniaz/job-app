@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { 
   View, 
-  StyleSheet,
-  AsyncStorage
+  StyleSheet
 } from 'react-native';
 import {
     Avatar,
@@ -19,12 +18,46 @@ import {
     DrawerItem
 } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-community/async-storage';
 import SignInScreen from '../screens/SignInScreen';
 import { StackActions, CommonActions } from '@react-navigation/native';
 
 import { AuthContext } from '../context/Context'
 
 export default class DrawerContent extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: true,
+            image: '',
+            name: '',
+            city: '',
+            county: ''
+        }
+    }
+
+    componentDidMount() {
+        this._retreieveApproveStatus();
+    }
+
+    _retreieveApproveStatus = async () => {
+        try {
+            const Is_Active = await AsyncStorage.getItem('ApproveStatus');
+            const parse = JSON.parse(Is_Active);
+            this.setState({ 
+                isLoading: false,
+                image: parse.image,
+                name: parse.name,
+                city: parse.city,
+                county: parse.county
+            })
+
+            console.log(parse.name, '---> ACTIVE STATUS')
+          
+          } catch (error) {
+            alert(error)
+          }
+    }
 
     //const { signOut } = React.useContext(AuthContext);
     handlePress(){
@@ -38,6 +71,10 @@ export default class DrawerContent extends Component {
         try {
           let obj = {
             email: '',
+            image: '',
+            name: '',
+            city: '',
+            county: ''
           }
     
           await AsyncStorage.setItem(
@@ -60,13 +97,13 @@ export default class DrawerContent extends Component {
                         <View style={{flexDirection: 'row', marginTop: 15}}>
                             <Avatar.Image 
                                 source={{
-                                    uri: 'https://cdn.pixabay.com/photo/2017/11/02/14/27/model-2911332_960_720.jpg'
+                                    uri: `http://myquickshift.com/public/UserImages/${this.state.image}`
                                 }}
                                 size={50}
                             />
                             <View style={{flexDirection: 'column', marginLeft: 15}}>
-                                <Title style={[styles.title, {color: '#FFFFFF'}]}>John Doe</Title>
-                                <Caption style={[styles.caption, {color: '#FFFFFF'}]}>XYZ Street, United States</Caption>
+                                <Title style={[styles.title, {color: '#FFFFFF'}]}>{this.state.name}</Title>
+                                <Caption style={[styles.caption, {color: '#FFFFFF'}]}>{this.state.city}, {this.state.county}</Caption>
                             </View>
                         </View>
                     </View>

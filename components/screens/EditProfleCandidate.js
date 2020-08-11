@@ -9,10 +9,11 @@ import {
 import { Avatar } from 'react-native-paper'
 import { Container, Content, Form, Item, Input, Button, Label, Body, Icon, ListItem, Picker, Footer, Textarea } from 'native-base';
 import LinearGradient from 'react-native-linear-gradient';
-import ImagePicker from 'react-native-image-picker';
 import DocumentPicker from 'react-native-document-picker';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
+import ImagePicker from 'react-native-image-crop-picker';
+import base64 from 'react-native-base64'
 
 export default class EditProfileCandidate extends Component {
     constructor(props) {
@@ -34,8 +35,8 @@ export default class EditProfileCandidate extends Component {
 
             user_id: '',
 
-            candidate_name: '',
-            description: '',
+            name: '',
+            introduction: '',
             email: '',
             dob: '',
             resume: '',
@@ -55,7 +56,9 @@ export default class EditProfileCandidate extends Component {
             Facebook: '',
             Twitter: '',
             LinkedIn: '',
-            Instagram: ''
+            Instagram: '',
+            image_name: '',
+            image_code: ''
         }
     }
 
@@ -81,148 +84,195 @@ export default class EditProfileCandidate extends Component {
         }
       };
 
-      editProfile_API(
-        candidate_name,
-        email,
-        addrs,
-        flat_number, 
-        street_name,
-        city, 
-        county,
-        postcode,  
-        dob,
-        phone, 
-        resume,
-        national_incurance_num, 
-        sort_code, 
-        account_no,
-        emergency_person_name,
-        emergency_person_no,
-        emergency_person_relation,
-        description, 
-        Facebook,
-        Twitter,
-        LinkedIn,
-        Instagram,
-        image) {
-        let axiosConfig = {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                "Access-Control-Allow-Origin": "*",
-            }
-        };
+      editProfile_API() {
+        // let axiosConfig = {
+        //   headers: {
+        //     'Content-Type': 'application/json;charset=UTF-8',
+        //     "Access-Control-Allow-Origin": "*",
+        //   }
+        // };
         console.log(this.state.user_id, '----> user ID')
-        console.log(candidate_name,
-            description, 
-            email, 
-            dob, 
-            resume, 
-            phone, 
-            addrs, 
-            flat_number, 
-            street_name, 
-            city, 
-            county, 
-            postcode, 
-            national_incurance_num, 
-            sort_code, 
-            account_no,
-            emergency_person_name,
-            emergency_person_no,
-            emergency_person_relation,
-            Facebook,
-            Twitter,
-            LinkedIn,
-            Instagram,
-            image, '----> Candidate Profile Data')
+        console.log(
+          this.state.name,
+          this.state.introduction,
+          this.state.email,
+          this.state.addrs,
+          this.state.flat_number,
+          this.state.street_name,
+          this.state.city,
+          this.state.county,
+          this.state.postcode,
+          this.state.dob,
+          this.state.phone,
+          this.state.resume,
+          this.state.national_incurance_num,
+          this.state.sort_code,
+          this.state.account_no,
+          this.state.emergency_person_name,
+          this.state.emergency_person_no,
+          this.state.emergency_person_relation,
+          this.state.Facebook,
+          this.state.Twitter,
+          this.state.LinkedIn,
+          this.state.Instagram,
+          this.state.image_name,
+          this.state.image_code, '----> Candidate Profile Data')
         
-        let formdata = new FormData();
+         let formdata = new FormData();
 
-        formdata.append('name', candidate_name)
-        formdata.append('introduction', description)
-        formdata.append('email', email)
-        formdata.append('dob', dob)
-        formdata.append('phone', phone)
-        formdata.append('resume', resume)
-        formdata.append('addrs', addrs)
-        formdata.append('flat_number', flat_number)
-        formdata.append('street_name', street_name)
-        formdata.append('city', city)
-        formdata.append('county', county)
-        formdata.append('postcode', postcode)
-        formdata.append('national_incurance_num', national_incurance_num)
-        formdata.append('sort_code', sort_code)
-        formdata.append('account_no', account_no)
-        formdata.append('emergency_person_name', emergency_person_name)
-        formdata.append('emergency_person_no', emergency_person_no)
-        formdata.append('emergency_person_relation', emergency_person_relation)
-        formdata.append('Facebook', Facebook)
-        formdata.append('Twitter', Twitter)
-        formdata.append('LinkedIn', LinkedIn)
-        formdata.append('Instagram', Instagram)
-        formdata.append('image', image)
+        formdata.append('name', this.state.name)
+        formdata.append('introduction', this.state.introduction)
+        formdata.append('email', this.state.email)
+        formdata.append('dob', this.state.dob)
+        formdata.append('phone', this.state.phone)
+        formdata.append('resume', this.state.resume)
+        formdata.append('addrs', this.state.addrs)
+        formdata.append('flat_number', this.state.flat_number)
+        formdata.append('street_name', this.state.street_name)
+        formdata.append('city', this.state.city)
+        formdata.append('county', this.state.county)
+        formdata.append('postcode', this.state.postcode)
+        formdata.append('national_incurance_num', this.state.national_incurance_num)
+        formdata.append('sort_code', this.state.sort_code)
+        formdata.append('account_no', this.state.account_no)
+        formdata.append('emergency_person_name', this.state.emergency_person_name)
+        formdata.append('emergency_person_no', this.state.emergency_person_no)
+        formdata.append('emergency_person_relation', this.state.emergency_person_relation)
+        formdata.append('Facebook', this.state.Facebook)
+        formdata.append('Twitter', this.state.Twitter)
+        formdata.append('LinkedIn', this.state.LinkedIn)
+        formdata.append('Instagram', this.state.Instagram)
+        formdata.append('image_name', this.state.image_name)
+        formdata.append('image_code', this.state.image_code)
 
-        axios.post(`http://production.myquickshift.com/app_api/update_profile_api/${this.state.user_id}`, {
+        axios.post(`http://myquickshift.com/app_api/update_profile_api/${this.state.user_id}`, {
             headers: {
-                'Content-Type': 'multipart/form-data',
+              'Content-Type': 'multipart/form-data',
             },
-            body: formdata
+                body: formdata
         })
+        
+        //     name: this.state.name,
+        //     introduction: this.state.description,
+        //     email: this.state.email,
+        //     dob: this.state.dob,
+        //     resume: this.state.resume,
+        //     phone: this.state.phone,
+        //     addrs: this.state.addrs,
+        //     flat_number: this.state.flat_number,
+        //     street_name: this.state.street_name,
+        //     city: this.state.city,
+        //     county: this.state.county,
+        //     postcode: this.state.postcode,
+        //     national_incurance_num: this.state.national_incurance_num,
+        //     sort_code: this.state.sort_code,
+        //     account_no: this.state.account_no,
+        //     emergency_person_name: this.state.emergency_person_name,
+        //     emergency_person_no: this.state.emergency_person_no,
+        //     emergency_person_relation: this.state.emergency_person_relation,
+        //     Facebook: this.state.Facebook,
+        //     Twitter: this.state.Twitter,
+        //     LinkedIn: this.state.LinkedIn,
+        //     Instagram: this.state.Instagram,
+        //     resume: this.state.resume,
+        //     image_name: this.state.image_name,
+        //     image_code: this.state.image_code
+        // }), axiosConfig)
           .then((response) => {
-            console.log(response.data.image_path, "------> console log Candidate Profile")
+            console.log(response.data, "------> console log Candidate Profile")
             this.setState({
                 isLoading: false,
                 data: response.data,
            })
-           alert('Data uploaded')
+           alert('Profile updated successfully!')
         }, (error) => {
           console.log(error,"------> console log Active Candidate Profile error");
-        });
+        })
       } 
 
+      ImagePicker = (fileUri) => {
+        ImagePicker.openPicker({
+            //multiple: true,
+            includeBase64: true
+          }).then(images => {
+            console.log(images);
+    
+            console.log(images.data, '---> BINARY DATA')
+    
+            let Images = ''
+    
+            let file = String(images.path).split("/")
+            let name = file[file.length-1]
+    
+            console.log(name,"///////2323223")
+            //Images.push(name)
+    
+            this.setState({
+                image_code: images.data,
+                image_name: name
+                //filePath: images.data,
+                //fileUri: Images,
+                //image_code: binaryCode
+              });
+            console.log(this.state.image_name, '---> FILE URI')
+          });
+      }
+
     cvPicker = async () => {
+      
+      
+      
+      let idCardBase64 = '';
         try {
             const resume = await DocumentPicker.pick({
               type: [DocumentPicker.types.pdf],
+              
             });
             console.log(
                 resume,  
                 resume.type, // mime type
                 resume.name,
-                resume.size
-            );
-                this.setState({resume: resume})
-          } catch (err) {
-            if (DocumentPicker.isCancel(err)) {
-              // User cancelled the picker, exit any dialogs or menus and move on
-            } else {
-              throw err;
-            }
-          }
-    }
+                resume.size,
 
-    chooseProfile = async () => {
-        // let options = {
-        //   title: 'Choose Image',
-        //   // customButtons: [
-        //   //   { name: 'customOptionKey', title: 'Choose Photo from Custom Option' },
-        //   // ],
-        //   storageOptions: {
-        //     skipBackup: true,
-        //     path: 'images',
-        //   },
-        // };
-        try {
-            const res = await DocumentPicker.pick({
-              type: [DocumentPicker.types.images],
-            });
-            console.log(
-              res,  
-              res.type, // mime type
-              res.name,
-              res.size
             );
-            this.setState({image: res})
+
+            let res = {
+              uri: resume.uri,
+              name: resume.name,
+              type: resume.type
+            }
+
+            this.setState({resume: res})
+
+            //console.log(res, '---> OBHBDSHBJSBD')
+
+                
+
+                // const fileToBase64 = (filename, filepath) => {
+                //   return new Promise(resolve => {
+                //     var file = new File([filename], filepath);
+                //     console.log(file, '---> 1 FILE')
+
+                //     var reader = new FileReader();
+                //     console.log(reader, '---> 2 READER')
+                    
+                //     // Read file content on file loaded event
+                //     reader.onload = function(event) {
+                //       console.log(event, '----> 3 Event')
+                      
+                //       resolve(event.target.result);
+                //     };
+                    
+                //     // Convert data to base64 
+                //     reader.readAsArrayBuffer(file);
+                //     console.log(file, '---> 4 Final')
+                //   });
+                // };
+
+                // fileToBase64(resume.name, resume.uri).then(result => {
+                //   console.log(result, '----> PDF TESTER');
+                // });
+
           } catch (err) {
             if (DocumentPicker.isCancel(err)) {
               // User cancelled the picker, exit any dialogs or menus and move on
@@ -230,7 +280,9 @@ export default class EditProfileCandidate extends Component {
               throw err;
             }
           }
+
     }
+    
 
     render(navigation) {
     return(
@@ -241,12 +293,12 @@ export default class EditProfileCandidate extends Component {
               <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: '3%'}}>
                 <Avatar.Image 
                   source={{
-                    uri: 'https://cdn.pixabay.com/photo/2017/11/02/14/27/model-2911332_960_720.jpg'
+                    uri: `data:image/gif;base64,${this.state.image_code}`
                   }}
                   size={100}
                   style={{marginBottom: '1%'}}
                 />
-                <Button small style={{marginLeft: '4%', width: 120, marginTop: '1%', marginBottom: '1%'}} onPress={() => this.chooseProfile()}>
+                <Button small style={{marginLeft: '4%', width: 120, marginTop: '1%', marginBottom: '1%'}} onPress={() => this.ImagePicker()}>
                   <Text style={{color: '#FFFFFF', fontWeight: 'bold', marginLeft: '11%'}}>Change Profile</Text>
                 </Button>
               
@@ -295,7 +347,7 @@ export default class EditProfileCandidate extends Component {
               </Item>
               <Item stackedLabel>
                 <Label style={styles.labelStyle}>Phone no. *</Label>
-                <Input style={styles.inputStyle} onChangeText={text => this.setState({ phone: text })} placeholder="" />
+                <Input style={styles.inputStyle} keyboardType='number-pad' onChangeText={text => this.setState({ phone: text })} placeholder="" />
               </Item>
               <View style={{flex: 1, flexDirection: 'column', alignItems: 'flex-start', marginTop: '1%'}}>
                 <Label style={[styles.labelStyle, {marginLeft: '4%'}]}>Attach your CV</Label>
@@ -317,7 +369,7 @@ export default class EditProfileCandidate extends Component {
               </Item>
               <Item stackedLabel>
                 <Label style={styles.labelStyle}>Sort code *</Label>
-                <Input style={styles.inputStyle} onChangeText={text => this.setState({ sort_code: text })} placeholder="" />
+                <Input style={styles.inputStyle} keyboardType='number-pad' onChangeText={text => this.setState({ sort_code: text })} placeholder="" />
               </Item>
               <Item stackedLabel>
                 <Label style={styles.labelStyle}>Account no. *</Label>
@@ -329,7 +381,7 @@ export default class EditProfileCandidate extends Component {
               </Item>
               <Item stackedLabel>
                 <Label style={styles.labelStyle}>Emergency person's no. *</Label>
-                <Input style={styles.inputStyle} onChangeText={text => this.setState({ emergency_person_no: text })} placeholder="" />
+                <Input style={styles.inputStyle} keyboardType='number-pad' onChangeText={text => this.setState({ emergency_person_no: text })} placeholder="" />
               </Item>
               <Item stackedLabel>
                 <Label style={styles.labelStyle}>Emergency person's relation *</Label>
@@ -356,6 +408,7 @@ export default class EditProfileCandidate extends Component {
                         style={styles.updateBtn}
                         onPress={() => this.editProfile_API(
                             this.state.name,
+                            this.state.introduction,
                             this.state.email,
                             this.state.addrs,
                             this.state.flat_number,
@@ -372,12 +425,12 @@ export default class EditProfileCandidate extends Component {
                             this.state.emergency_person_name,
                             this.state.emergency_person_no,
                             this.state.emergency_person_relation,
-                            this.state.description,
                             this.state.Facebook,
                             this.state.Twitter,
                             this.state.LinkedIn,
                             this.state.Instagram,
-                            this.state.image
+                            this.state.image_name,
+                            this.state.image_code
                         )}
                     
                     >
@@ -440,3 +493,35 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
 });
+
+
+// chooseProfile = async () => {
+  //     // let options = {
+  //     //   title: 'Choose Image',
+  //     //   // customButtons: [
+  //     //   //   { name: 'customOptionKey', title: 'Choose Photo from Custom Option' },
+  //     //   // ],
+  //     //   storageOptions: {
+  //     //     skipBackup: true,
+  //     //     path: 'images',
+  //     //   },
+  //     // };
+  //     try {
+  //         const res = await DocumentPicker.pick({
+  //           type: [DocumentPicker.types.images],
+  //         });
+  //         console.log(
+  //           res,  
+  //           res.type, // mime type
+  //           res.name,
+  //           res.size
+  //         );
+  //         this.setState({image: res})
+  //       } catch (err) {
+  //         if (DocumentPicker.isCancel(err)) {
+  //           // User cancelled the picker, exit any dialogs or menus and move on
+  //         } else {
+  //           throw err;
+  //         }
+  //       }
+  // }
