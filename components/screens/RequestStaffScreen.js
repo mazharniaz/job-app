@@ -14,6 +14,7 @@ import axios from 'axios';
 import Spinner from 'react-native-spinkit';
 import AsyncStorage from '@react-native-community/async-storage'; 
 import ImagePicker from 'react-native-image-crop-picker';
+import DatePicker from 'react-native-datepicker';
 //import { TextInput } from 'react-native-gesture-handler';
 //import { ActivityIndicator } from 'react-native-paper';
 
@@ -73,7 +74,7 @@ export default class RequestStaffScreen extends Component {
     this._retrieve_address();
 
     //console.log(axiosConfig, "------->>>")
-    axios.get('http://production.myquickshift.com/app_api/catagory_job_api')
+    axios.get('http://myquickshift.com/app_api/catagory_job_api')
       .then((response) => {
         console.log(response.data.jobs_search_list, "------> Job Category console")
         //resp = response;
@@ -259,6 +260,8 @@ export default class RequestStaffScreen extends Component {
   //     alert(error)
   //   }
   // };
+
+  
   
   
   render(navigation) {
@@ -379,10 +382,38 @@ export default class RequestStaffScreen extends Component {
               </Item>
 
               <Item stackedLabel>
-                <Label style={styles.labelStyle}>Closing Date</Label>
-                <Input style={styles.inputStyle} onChangeText={text => this.setState({closing_date: text})} placeholder="Set Closing Date" />
+              <Label style={styles.labelStyle}>Closing Date</Label>
+              <DatePicker
+                  style={{width: 200}}
+                  date={this.state.closing_date} //initial date from state
+                  mode="date" //The enum of date, datetime and time
+                  //placeholder="select date"
+                  format="DD-MM-YYYY"
+                  //minDate="01-01-2016"
+                  //maxDate="01-01-2019"
+                  confirmBtnText="Confirm"
+                  cancelBtnText="Cancel"
+                  showIcon={false}
+                  customStyles={{
+                    // dateIcon: {
+                    //   position: 'absolute',
+                    //   left: 0,
+                    //   top: 4,
+                    //   marginLeft: '5%',
+                    //   display: 'none'
+                    // },
+                    dateInput: {
+                      marginLeft: '-32%',
+                      borderColor: '#ffffff',
+                      alignItems: 'flex-start',
+                      marginTop: '3%'
+                    }
+                  }}
+                  onDateChange={(date) => {this.setState({closing_date: date})}}
+                />
               </Item>
-              <Text style={{fontSize: 11, color: 'grey', marginLeft: '4%'}}>Set a date or leave blank to automatically use the expire date</Text>
+              
+              {/* <Text style={{fontSize: 11, color: 'grey', marginLeft: '4%'}}>Set a date or leave blank to automatically use the expire date</Text> */}
 
               <Item stackedLabel>
                 <Label style={styles.labelStyle}>Notification Email</Label>

@@ -13,7 +13,8 @@ import DocumentPicker from 'react-native-document-picker';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import ImagePicker from 'react-native-image-crop-picker';
-import base64 from 'react-native-base64'
+import base64 from 'react-native-base64';
+import DatePicker from 'react-native-datepicker';
 
 export default class EditProfileCandidate extends Component {
     constructor(props) {
@@ -343,7 +344,34 @@ export default class EditProfileCandidate extends Component {
               </Item>
               <Item stackedLabel>
                 <Label style={styles.labelStyle}>Birthday</Label>
-                <Input style={styles.inputStyle} onChangeText={text => this.setState({ dob: text })} placeholder="" />
+                <DatePicker
+                  style={{width: 200}}
+                  date={this.state.dob} //initial date from state
+                  mode="date" //The enum of date, datetime and time
+                  //placeholder="select date"
+                  format="DD-MM-YYYY"
+                  //minDate="01-01-2016"
+                  //maxDate="01-01-2019"
+                  confirmBtnText="Confirm"
+                  cancelBtnText="Cancel"
+                  showIcon={false}
+                  customStyles={{
+                    // dateIcon: {
+                    //   position: 'absolute',
+                    //   left: 0,
+                    //   top: 4,
+                    //   marginLeft: '5%',
+                    //   display: 'none'
+                    // },
+                    dateInput: {
+                      marginLeft: '-32%',
+                      borderColor: '#ffffff',
+                      alignItems: 'flex-start',
+                      marginTop: '3%'
+                    }
+                  }}
+                  onDateChange={(date) => {this.setState({dob: date})}}
+                />
               </Item>
               <Item stackedLabel>
                 <Label style={styles.labelStyle}>Phone no. *</Label>
