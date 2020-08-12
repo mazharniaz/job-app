@@ -90,7 +90,7 @@ export default class ReferalScreen extends Component {
         .then((response) => {
             console.log(response.data, " DATA RESPONSE ====>")
             this.setState({
-                isLoading: true,
+                isLoading: false,
                 data: response.data
         })
         if(response.data.message === 'Refferal send') {

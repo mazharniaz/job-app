@@ -23,6 +23,7 @@ export default class SearchScreen extends Component {
             isLoading: true,
             data: {},
             user_id: '',
+            is_active: '',
 
             id: '',
 
@@ -33,7 +34,33 @@ export default class SearchScreen extends Component {
     }
 
     componentDidMount() {
+        
+        this._retreieveApproveStatus()
+    }
+
+    _retreieveApproveStatus = async () => {
+        try {
+            const Is_Active = await AsyncStorage.getItem('ApproveStatus');
+            const parse = JSON.parse(Is_Active);
+            this.setState({ 
+                is_active: parse.is_active,
+            })
+
+            //this.handleJobNavigation()
+    
+            console.log(parse.is_active, '---> ACTIVE STATUS')
+          
+          } catch (error) {
+            alert(error)
+          }
+    }
+    
+    handleJobNavigation() {
+      if(this.state.is_active == "Approved") {
         this.searchAPI();
+      } else {
+        this.props.navigation.navigate('JobBlocker')
+      }
     }
 
     updateQuery(text) {
@@ -83,21 +110,24 @@ export default class SearchScreen extends Component {
       // };
 
       searchAPI() {
+          
         axios.get(`http://production.myquickshift.com/app_api/search_api?job_title=${this.state.query}`)
-          .then((response) => {
+        .then((response) => {
             console.log(response.data, "------> console log Search API")
             this.setState({
                 isLoading: false,
                 data: response.data
-           },
+        },
             function() {
                 console.log(response.data.jobs_search_list, '---> SEARCH LIST')
                 this.searchData = response.data.jobs_search_list;
             }
-           )
+        )
         }, (error) => {
-          console.log(error,"------> console log Search API error");
+        console.log(error,"------> console log Search API error");
         });
+          
+        
       }
 
       SearchFilterFunction(text) {

@@ -14,6 +14,7 @@ import CompanyProfileScreen from '../screens/CompanyProfileScreen'
 import { Header, Item, Text, Button, Input } from 'native-base'
 //import JobSearchScreen from '../screens/JobSeachScreen';
 import JobSearchScreen2 from '../screens/JobSearchScreen2';
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 let qqqq=""
@@ -33,7 +34,9 @@ class TabNavigationCandidate extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      query: ''
+      isLoading: true,
+      query: '',
+      is_active: ''
     }
   }
 
@@ -44,7 +47,8 @@ class TabNavigationCandidate extends Component {
   }
 
   componentDidMount() {
-    _this = this
+    _this = this;
+
   }
 
 

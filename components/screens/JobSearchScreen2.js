@@ -4,6 +4,7 @@ import { Header, Left, Item, Title, Input, Thumbnail, Card, Body, CardItem, Foot
 import axios from 'axios';
 import Spinner from 'react-native-spinkit';
 import { ScrollView } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class JobSearchScreen2 extends Component {
   constructor(props) {
@@ -11,12 +12,39 @@ export default class JobSearchScreen2 extends Component {
     this.state = {
       isLoading: true,
       data: {},
-      job_title: ''
+      job_title: '',
+      is_active: ''
     }
   }
 
   componentDidMount() {
     this.searchAPI("");
+    this._retreieveApproveStatus()
+  }
+
+  _retreieveApproveStatus = async () => {
+    try {
+        const Is_Active = await AsyncStorage.getItem('ApproveStatus');
+        const parse = JSON.parse(Is_Active);
+        this.setState({ 
+            is_active: parse.is_active,
+        })
+
+        this.handleJobNavigation()
+
+        console.log(parse.is_active, '---> ACTIVE STATUS')
+      
+      } catch (error) {
+        alert(error)
+      }
+}
+
+  handleJobNavigation() {
+    if(this.state.is_active == "Approved") {
+      this.searchAPI();
+    } else {
+      this.props.navigation.navigate('JobBlocker')
+    }
   }
 
   searchAPI(key) {

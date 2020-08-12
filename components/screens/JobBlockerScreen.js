@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { View, Text } from 'native-base';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import Spinner from 'react-native-spinkit';
 import moment from "moment";
+import LinearGradient from 'react-native-linear-gradient';
 
 export default class JobBlockerScreen extends Component {
     constructor(props) {
@@ -26,7 +27,9 @@ export default class JobBlockerScreen extends Component {
     }
 
     _retrieveData = async () => {
-        
+        // this.setState({
+        //     isLoading: false
+        // })
         try {
           const user = await AsyncStorage.getItem('user');
           const parse = JSON.parse(user);
@@ -36,17 +39,29 @@ export default class JobBlockerScreen extends Component {
 
           axios.get(`http://myquickshift.com/app_api/interview_show_api/${this.state.user_id}`)
           .then((response) => {
-            console.log(response.data, "------> console log Interview Screen")
-            this.setState({
-                isLoading: false,
-                data: response.data,
+            
+            console.log(response.data.interview_list.length, "------> console log Interview Screen")
+            if(response.data.interview_list.length==0){
+                this.setState({
+                    isLoading: false,
+                    data: response.data,
+                })
+            } else {
+                this.setState({
+                    isLoading: false,
+                    data: response.data,
+    
+                    day: response.data.interview_list[response.data.interview_list.length-1].day,
+                    date: response.data.interview_list[response.data.interview_list.length-1].date,
+                    interview_start_timing: response.data.interview_list[response.data.interview_list.length-1].interview_start_timing,
+                    interview_close_timing: response.data.interview_list[response.data.interview_list.length-1].interview_close_timing,
+                    message: response.data.interview_list[response.data.interview_list.length-1].message,
+    
+                })
+            }
+            
 
-                day: response.data.interview_list[response.data.interview_list.length-1].day,
-                date: response.data.interview_list[response.data.interview_list.length-1].date,
-                interview_start_timing: response.data.interview_list[response.data.interview_list.length-1].interview_start_timing,
-                interview_close_timing: response.data.interview_list[response.data.interview_list.length-1].interview_close_timing,
-                message: response.data.interview_list[response.data.interview_list.length-1].message,
-            })
+            
         }, (error) => {
           console.log(error,"------> console log Interview Screen error");
         });
@@ -57,19 +72,30 @@ export default class JobBlockerScreen extends Component {
       };
 
     render(navigation) {
+        
         if(this.state.isLoading) {
+            //console.log(this.state.data, '----> TETTETETTETETT')
+            
             return(
                 <View style={{flex: 1, alignItems: "center", justifyContent: 'center'}}>
                     <Spinner type='FadingCircleAlt' color='#0066ff' />
                 </View>
             )
-          } else if(this.state.data.interview_list === []) {
+          } else {
+              console.log(this.state.data,"-----====")
+            if(this.state.data.interview_list) {
+                //console.log(this.state.isLoading, '-----> LOADER')
                 return (
-                    <View>
-                        <Text>
+                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                        <Text style={{color: '#0066ff', fontSize: 16, textAlign: 'center'}}>
                             Your account is not verified yet. conatact support to schedule interview.
                             Once we approve your account you will be able to apply on jobs.
                         </Text>
+                        <TouchableOpacity style={styles.signIn} onPress={() => this.props.navigation.navigate('LiveChat')}>
+                            <LinearGradient style={styles.signIn} colors={['#abec9e', '#0066ff']} start={{x: 0, y: 0}} end={{x: 1, y: 0}}>
+                                <Text style={[styles.textSign, {color: '#ffffff'}]}>Contact Support</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
                     </View>
                 )
           } else {
@@ -94,6 +120,8 @@ export default class JobBlockerScreen extends Component {
                 </View>
             )
           }
+          }
+              
         
     }
 }
@@ -108,5 +136,22 @@ const styles = StyleSheet.create({
     descriptionStyle: {
         fontSize: 14,
         marginBottom: '5%'
+    },
+    button: {
+        alignItems: 'center',
+        marginTop: 30,
+        marginLeft: '4%'
+    },
+    signIn: {
+        width: 170,
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10,
+        marginTop: '4%'
+    },
+    textSign: {
+        fontSize: 18,
+        fontWeight: 'bold'
     }
 });
