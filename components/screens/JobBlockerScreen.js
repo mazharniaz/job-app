@@ -41,7 +41,7 @@ export default class JobBlockerScreen extends Component {
           .then((response) => {
             
             console.log(response.data.interview_list.length, "------> console log Interview Screen")
-            if(response.data.interview_list.length==0){
+            if(response.data.interview_list.length==0) {
                 this.setState({
                     isLoading: false,
                     data: response.data,
@@ -82,8 +82,8 @@ export default class JobBlockerScreen extends Component {
                 </View>
             )
           } else {
-              console.log(this.state.data,"-----====")
-            if(this.state.data.interview_list) {
+              console.log(this.state.data.interview_list,"-----====")
+            if(this.state.data.interview_list.length==0) {
                 //console.log(this.state.isLoading, '-----> LOADER')
                 return (
                     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -99,6 +99,7 @@ export default class JobBlockerScreen extends Component {
                     </View>
                 )
           } else {
+              console.log(this.state.day, '--->DAYYDAYYDY')
             return (
                 <View style={{marginLeft: '2%', marginRight: '2%', marginTop: '5%'}}>
                     <View>
