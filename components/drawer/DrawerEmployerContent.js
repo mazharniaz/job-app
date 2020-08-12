@@ -68,16 +68,13 @@ export default class DrawerEmployerContent extends Component {
             routes: [{ name: 'SignInScreen' }],
           });
         this._storeData();
+        this._storeUserData();
     }
 
     _storeData = async () => {
         try {
           let obj = {
             email: '',
-            image: '',
-            name: '',
-            city: '',
-            county: ''
           }
     
           await AsyncStorage.setItem(
@@ -89,6 +86,26 @@ export default class DrawerEmployerContent extends Component {
         const user = await AsyncStorage.getItem('user');
         console.log(user, '----------->')
       };
+
+      _storeUserData = async () => {
+        try {
+            let obj = {
+              image: '',
+              name: '',
+              city: '',
+              county: ''
+            }
+      
+            await AsyncStorage.setItem(
+              'ApproveStatus', JSON.stringify(obj)        
+            );
+          } catch (error) {
+            alert(error)
+          }
+          const UserData = await AsyncStorage.getItem('ApproveStatus');
+          console.log(UserData, '----------->')
+        };
+      
 
       handleJobNavigation() {
           if(this.state.is_active === "Approved") {

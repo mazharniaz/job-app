@@ -124,6 +124,7 @@ export default class SignInScreen extends Component {
                     this.props.navigation.navigate('EmailVerification');
                  } else {
                         this._storeData();
+                        this._storeApproveStatus()
                         this.props.navigation.navigate('DrawerEmployer');
                  }
             }

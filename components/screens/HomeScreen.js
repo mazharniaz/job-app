@@ -15,13 +15,35 @@ import LinearGradient from 'react-native-linear-gradient'
 import { Card, CardItem, Thumbnail, Container, Content } from 'native-base';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import Spinner from 'react-native-spinkit';
+import AsyncStorage from '@react-native-community/async-storage';
 
 class HomeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoading: true
+            isLoading: true,
+            name: ''
         }
+    }
+
+    componentDidMount() {
+        this._retreieveName();
+    }
+
+    _retreieveName = async () => {
+        try {
+            const name = await AsyncStorage.getItem('ApproveStatus');
+            const parse = JSON.parse(name);
+            this.setState({
+                isLoading: false, 
+                name: parse.name,
+            })
+
+            console.log(parse.name, '---> ACTIVE STATUS')
+          
+          } catch (error) {
+            alert(error)
+          }
     }
 
     render(navigation) {
@@ -38,7 +60,7 @@ class HomeScreen extends Component {
             <SafeAreaView>
             <TouchableOpacity>
                 <View style={styles.header}>
-                    <Text style={styles.text_header}>Hi </Text>
+                    <Text style={styles.text_header}>Hi {this.state.name}</Text>
                     <Text style={styles.text_tagLine}>What are you looking for?</Text>
                 </View>
             </TouchableOpacity>

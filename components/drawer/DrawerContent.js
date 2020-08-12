@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { 
   View, 
-  StyleSheet
+  StyleSheet,
+  SafeAreaView
 } from 'react-native';
 import {
     Avatar,
@@ -21,6 +22,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-community/async-storage';
 import SignInScreen from '../screens/SignInScreen';
 import { StackActions, CommonActions } from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 
 import { AuthContext } from '../context/Context'
 
@@ -45,7 +47,6 @@ export default class DrawerContent extends Component {
             const Is_Active = await AsyncStorage.getItem('ApproveStatus');
             const parse = JSON.parse(Is_Active);
             this.setState({ 
-                isLoading: false,
                 image: parse.image,
                 name: parse.name,
                 city: parse.city,
@@ -66,15 +67,12 @@ export default class DrawerContent extends Component {
             routes: [{ name: 'SignInScreen' }],
           });
         this._storeData();
+        this._storeUserData();
     }
     _storeData = async () => {
         try {
           let obj = {
             email: '',
-            image: '',
-            name: '',
-            city: '',
-            county: ''
           }
     
           await AsyncStorage.setItem(
@@ -87,13 +85,34 @@ export default class DrawerContent extends Component {
         console.log(user, '----------->')
       };
 
+      _storeUserData = async () => {
+        try {
+            let obj = {
+              image: '',
+              name: '',
+              city: '',
+              county: ''
+            }
+      
+            await AsyncStorage.setItem(
+              'ApproveStatus', JSON.stringify(obj)        
+            );
+          } catch (error) {
+            alert(error)
+          }
+          const UserData = await AsyncStorage.getItem('ApproveStatus');
+          console.log(UserData, '----------->')
+        };
+
    render(props) { 
     
     return(
         <View style={{flex: 1}}>
             <DrawerContentScrollView { ... props}>
                 <View style={[styles.drawerContent, {marginTop: '-2%'}]}>
-                    <View style={[styles.userInfoSection, {backgroundColor: '#0066ff', paddingTop: 10, paddingBottom: 30}]}>
+                <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#abec9e', '#0066ff']} style={styles.gradient}>
+                    <SafeAreaView>
+                    <View style={[styles.userInfoSection, {paddingTop: 10, paddingBottom: 30}]}>
                         <View style={{flexDirection: 'row', marginTop: 15}}>
                             <Avatar.Image 
                                 source={{
@@ -107,6 +126,8 @@ export default class DrawerContent extends Component {
                             </View>
                         </View>
                     </View>
+                    </SafeAreaView>
+                    </LinearGradient>
                     
                     <Drawer.Section style={styles.drawerSection}>
                         <DrawerItem style={[styles.drawerItem, {marginTop: '-3%'}]}
