@@ -21,6 +21,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-community/async-storage';
+import axios from 'axios';
 
 import { AuthContext } from '../context/Context'
 
@@ -29,18 +30,51 @@ export default class DrawerEmployerContent extends Component {
         super(props);
         this.state = {
             isLoading: true,
+            data: {},
             is_active: '',
             image: '',
             name: '',
             city: '',
             county: ''
         }
+        //this.activeStatus_API = this.activeStatus_API.bind(this);
     }
 
     //const { signOut } = React.useContext(AuthContext);
 
     componentDidMount() {
-        this._retreieveApproveStatus()
+        this._retreieveApproveStatus();
+        //this.activeStatus_API();
+    }
+
+    activeStatus_API = async () => {
+        //this.forceUpdate();
+        try {
+            const user = await AsyncStorage.getItem('user');
+            const parse = JSON.parse(user);
+            this.setState({ user_id: parse.user_id})
+            console.log(parse.user_id, '---> user')
+  
+            axios.get(`http://myquickshift.com/app_api/check_candidate_status/${this.state.user_id}`)
+            .then((response) => {
+              console.log(response.data.is_active, "------> console log Candidate Status")
+              this.setState({
+                  isLoading: false,
+                  data: response.data,
+
+                  is_active: response.data.is_active
+  
+             })
+
+             this.navigation_Conditions();
+
+          }, (error) => {
+            console.log(error,"------> console log Candidate Status");
+          });
+          
+          } catch (error) {
+            alert(error)
+          }
     }
 
     _retreieveApproveStatus = async () => {
@@ -48,14 +82,14 @@ export default class DrawerEmployerContent extends Component {
             const Is_Active = await AsyncStorage.getItem('ApproveStatus');
             const parse = JSON.parse(Is_Active);
             this.setState({ 
-                is_active: parse.is_active,
+                //is_active: parse.is_active,
                 image: parse.image,
                 name: parse.name,
                 city: parse.city,
                 county: parse.county
             })
 
-            console.log(parse.is_active, '---> ACTIVE STATUS')
+            console.log(parse.name, '---> ACTIVE STATUS')
           
           } catch (error) {
             alert(error)
@@ -93,7 +127,8 @@ export default class DrawerEmployerContent extends Component {
               image: '',
               name: '',
               city: '',
-              county: ''
+              county: '',
+              //is_active: ''
             }
       
             await AsyncStorage.setItem(
@@ -106,9 +141,16 @@ export default class DrawerEmployerContent extends Component {
           console.log(UserData, '----------->')
         };
       
+    
+    handleJobNavigation() {
+          
+          this.activeStatus_API();
+          
+          console.log(Math.random(), this.state.is_active, '---> ATIVEDJLSJDLJ')
+      }
 
-      handleJobNavigation() {
-          if(this.state.is_active === "Approved") {
+      navigation_Conditions() {
+        if(this.state.is_active === "Approved") {
             this.props.navigation.navigate('MyJobs')
           } else {
             this.props.navigation.navigate('JobBlocker')

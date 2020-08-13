@@ -38,6 +38,8 @@ class TabNavigationCandidate extends Component {
       query: '',
       is_active: ''
     }
+
+    //this.forceUpdateHandler = this.forceUpdateHandler.bind(this)
   }
 
   updateQuery(text) {
@@ -88,7 +90,7 @@ class TabNavigationCandidate extends Component {
         options={{
           tabBarLabel: 'Notification',
           tabBarIcon: ({ color }) => (
-            <Icon name="md-notifications" color={color} size={26} />
+            <Icon name="md-notifications" color={color} size={26}  />
           ),
         }}
       />
@@ -181,7 +183,7 @@ const ProfileStackScreen = ({navigation}) => (
           fontSize: 18
       },
       headerTitleAlign: 'center',
-      headerTitle: 'Profile'
+      headerTitle: 'Profile',
   }}>
       <ProfileStack.Screen name="Profile" component={ProfileScreen} options={{
           headerLeft: () => (

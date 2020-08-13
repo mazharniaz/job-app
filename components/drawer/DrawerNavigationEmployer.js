@@ -73,10 +73,10 @@ export default class DrawerNavigationEmployer extends Component {
                   <Drawer.Screen name="EditProfile" component={EditProfileStackScreen} />
                   <Drawer.Screen name="ChangePassword" component={ChangePasswordStackScreen} />
                   <Drawer.Screen name="CandidateAllJobsDescription" unmountOnBlur={true} options={{ unmountOnBlur: true }} component={CandidateAllJobDescriptionStackScreen} />
-                  <Drawer.Screen name="SearchScreenJobDetails" component={SearchScreenJobDetailsStackScreen} />
+                  <Drawer.Screen name="SearchScreenJobDetails" unmountOnBlur={true} options={{ unmountOnBlur: true }} component={SearchScreenJobDetailsStackScreen} />
                   <Drawer.Screen name="ApplyJob" component={ApplyJobStackScreen} />
                   <Drawer.Screen name="Refer" component={ReferalStackScreen} />
-                  <Drawer.Screen name="JobBlocker" component={JobBlockerStackScreen} />
+                  <Drawer.Screen name="JobBlocker" unmountOnBlur={true} options={{ unmountOnBlur: true }} component={JobBlockerStackScreen} />
               </Drawer.Navigator>
              
         )

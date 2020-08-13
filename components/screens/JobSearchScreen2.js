@@ -12,40 +12,101 @@ export default class JobSearchScreen2 extends Component {
     this.state = {
       isLoading: true,
       data: {},
+      dataStatus: {},
       job_title: '',
-      is_active: ''
+      is_active: '',
+
+      id: ''
     }
+
+    console.log(this.props, '--> SEARCH SCREEN PROPS')
   }
 
   componentDidMount() {
-    this.searchAPI("");
-    this._retreieveApproveStatus()
-  }
-
-  _retreieveApproveStatus = async () => {
-    try {
-        const Is_Active = await AsyncStorage.getItem('ApproveStatus');
-        const parse = JSON.parse(Is_Active);
-        this.setState({ 
-            is_active: parse.is_active,
-        })
-
-        this.handleJobNavigation()
-
-        console.log(parse.is_active, '---> ACTIVE STATUS')
+    
+    this._unsubscribe = this.props.navigation.addListener('focus', () => {
       
-      } catch (error) {
-        alert(error)
-      }
-}
-
-  handleJobNavigation() {
-    if(this.state.is_active == "Approved") {
-      this.searchAPI();
-    } else {
-      this.props.navigation.navigate('JobBlocker')
-    }
+        this.activeStatus_API()
+        console.log('---------> ComponentDIDMOUNT <---------')
+      
+      
+    });
   }
+
+  componentWillUnmount() {
+    this._unsubscribe();
+    console.log('---------> ComponentWillMOUNT <---------')
+  }
+
+  // componentDidMount() {
+    
+  //   //setInterval(this.activeStatus_API(),15000)
+  //   this.activeStatus_API();
+
+  //   //this.searchAPI("");
+  // }
+
+//   _retreieveApproveStatus = async () => {
+//     try {
+//         const Is_Active = await AsyncStorage.getItem('ApproveStatus');
+//         const parse = JSON.parse(Is_Active);
+//         this.setState({ 
+//             is_active: parse.is_active,
+//         })
+
+//         this.handleJobNavigation()
+
+//         console.log(parse.is_active, '---> ACTIVE STATUS')
+      
+//       } catch (error) {
+//         alert(error)
+//       }
+// }
+
+
+activeStatus_API = async () => {
+  //this.forceUpdate();
+  try {
+      const user = await AsyncStorage.getItem('user');
+      const parse = JSON.parse(user);
+      this.setState({ user_id: parse.user_id})
+      console.log(parse.user_id, '---> user')
+
+      axios.get(`http://myquickshift.com/app_api/check_candidate_status/${this.state.user_id}`)
+      .then((response) => {
+        console.log(response.data.is_active, "------> console log Candidate Status")
+        this.setState({
+            //isLoading: false,
+            dataStatus: response.data,
+
+            is_active: response.data.is_active
+
+       })
+       console.log(response.data.is_active, 'ACTIVE STATE')
+
+      if(response.data.is_active == "Approved") {
+        console.log('hdjkhakjshkjasjkdsah')
+        this.searchAPI("");
+      } else {
+        this.props.navigation.navigate('JobBlocker')
+      }
+
+    }, (error) => {
+      console.log(error,"------> console log Candidate Status");
+    });
+    
+    } catch (error) {
+      alert(error)
+    }
+ }
+
+  // handleJobNavigation() {
+  //   if(this.state.is_active == "Approved") {
+  //     this.searchAPI("");
+  //   } else {
+  //     this.props.navigation.navigate('JobBlocker')
+  //   }
+  // }
 
   searchAPI(key) {
     let axiosConfig = {
@@ -77,11 +138,31 @@ export default class JobSearchScreen2 extends Component {
     console.log(text, '---> QUERY')
   }
 
+  _storeJobDescriptionData = async (_id) => {
+    try {
+      
+      let obj = {
+        id: _id,
+      }
+
+      await AsyncStorage.setItem(
+        'jobData', JSON.stringify(obj)        
+      );
+    } catch (error) {
+      alert(error)
+    }
+  };
+
+  handlePress(_id) {
+    this._storeJobDescriptionData(_id);
+    this.props.navigation.navigate('SearchScreenJobDetails')
+  }
+
   list = () => {
         
     return this.state.data.jobs_search_list.map((element, i) => {
       return (
-        <TouchableOpacity /*onPress={() => this.handlePress(element.id)}*/ >
+        <TouchableOpacity onPress={() => this.handlePress(element.id)} >
           <Card style={styles.cardStyle} key={i}>
               <CardItem cardBody>
                   <Image source={{uri: 'https://images.pexels.com/photos/323705/pexels-photo-323705.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260'}} 
@@ -90,15 +171,15 @@ export default class JobSearchScreen2 extends Component {
                   <Left>
                       <Body style={{marginTop: 2}}>
                           
-                          <Text note style={{fontSize: 8}}>jhdkjhakjdhjkahsd</Text>
+                          <Text note style={{fontSize: 8}}>{element.job_category}</Text>
                           <Text style={{fontSize: 12}}>{element.job_title}</Text>
-                          <Text note style={{fontSize: 8}}>job address</Text>
+                          <Text note style={{fontSize: 8}}>{element.Address}</Text>
 
                           <CardItem style={{marginTop:0}}>
                               <Left style={{marginLeft: '-11%'}}>
                                   <Body style={{borderRightColor: '#000000', borderRightWidth: 1}}>
                                       <Text style={{fontSize: 8}}>Total Pay</Text>
-                                      <Text style={{fontSize: 8}}>salary offer</Text>
+                                      <Text style={{fontSize: 8}}>{element.salary_offer}</Text>
                                   </Body>
                               </Left>
                               <Body style={{marginLeft: '5%', borderRightColor: '#000000', borderRightWidth: 1}}>
@@ -107,7 +188,7 @@ export default class JobSearchScreen2 extends Component {
                               </Body>
                               <Body style={{marginLeft: '5%'}}>
                                   <Icon type="FontAwesome" name="street-view" style={{fontSize: 12}} /> 
-                                  <Text style={{fontSize: 8}}>job location</Text>
+                                  <Text style={{fontSize: 8}}>{element.job_location == '' ? "N/A" : element.job_location}</Text>
                               </Body>
                           </CardItem>
 

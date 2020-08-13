@@ -134,7 +134,7 @@ export default class SignInScreen extends Component {
                 } else {
                     //console.log(navigation, '----> NAIAIIAIAIIA')
                     this._storeData();
-                    this._storeApproveStatus(this.state.is_active);
+                    this._storeApproveStatus();
                     this.props.navigation.navigate('DrawerCandidate');
                 }
             }
@@ -240,7 +240,7 @@ export default class SignInScreen extends Component {
         //console.log(this.state.data, "----> UserID Checking")
         try {
           let obj = {
-            is_active: this.state.is_active,
+            //is_active: this.state.is_active,
             image: this.state.image,
             name: this.state.name,
             city: this.state.city,
